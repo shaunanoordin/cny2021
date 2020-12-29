@@ -1,0 +1,90 @@
+$white: #fff;
+$light: #eee;
+$light-grey: #ccc;
+$grey: #888;
+$dark-grey: #666;
+$dark: #444;
+$black: #000;
+
+$primary: #c44;
+$primary-highlight: #e66;
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: "Source Code Pro", monospace;
+  font-size: 16px;
+  background: $dark url("../assets/simple-bg.png");
+  color: $dark;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+a {
+  color: $primary;
+  text-decoration: none;
+  
+  &:hover {
+    color: $primary-highlight;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  td,
+  th {
+    border: 1px solid $dark;
+  }
+}
+  
+#app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  background: $white;
+}
+
+#app > header,
+#app > footer {
+  font-size: 0.5rem;
+  flex: 0 0 auto;
+  padding: 0.5rem;
+  background: $primary;
+  color: $light;
+
+  h1 {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+#app > main {
+  background: $white;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+
+  #canvas {
+    flex: 0 0 auto;
+    display: block;
+    margin: 0 auto;
+    max-width: 100vw;
+    max-height: 80vh;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+  }
+}
