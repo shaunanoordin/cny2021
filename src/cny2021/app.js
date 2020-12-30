@@ -144,7 +144,7 @@ class App {
       c2d.lineTo(inputCoords.x, inputCoords.y)
       c2d.stroke()
       c2d.beginPath()
-      c2d.arc(inputCoords.x, inputCoords.y, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY, 0, 2 * Math.PI);
+      c2d.arc(inputCoords.x, inputCoords.y, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY, 0, 2 * Math.PI)
       c2d.stroke()
 
       const arrowCoords = {
@@ -240,20 +240,20 @@ class App {
       entity.y += entity.moveY * timeCorrection
     })
     
-    for (let a = 0; a < this.entities.length; a++) {
+    for (let a = 0 ; a < this.entities.length ; a++) {
       let entityA = this.entities[a]
       
-      for (let b = a + 1; b < this.entities.length; b++) {
+      for (let b = a + 1 ; b < this.entities.length ; b++) {
         let entityB = this.entities[b]
         let collisionCorrection = Physics.checkCollision(entityA, entityB)
                 
         if (collisionCorrection) {
-          entityA.x = collisionCorrection.ax;
-          entityA.y = collisionCorrection.ay;
-          entityB.x = collisionCorrection.bx;
-          entityB.y = collisionCorrection.by;
-          entityA.onCollision(entityB, collisionCorrection);
-          entityB.onCollision(entityA, collisionCorrection);
+          entityA.x = collisionCorrection.ax
+          entityA.y = collisionCorrection.ay
+          entityB.x = collisionCorrection.bx
+          entityB.y = collisionCorrection.by
+          entityA.onCollision(entityB, collisionCorrection)
+          entityB.onCollision(entityA, collisionCorrection)
         }
       }
     }  

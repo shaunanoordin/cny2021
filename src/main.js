@@ -1,13 +1,4 @@
-/*  
-Bull, China Shop
-----------------
-
-A game about smashing things.
-
-(Shaun A. Noordin | shaunanoordin.com | 20200711)
- */
-
-import App from './app';
+import App from './cny2021'
 
 var app
 window.onload = function() {

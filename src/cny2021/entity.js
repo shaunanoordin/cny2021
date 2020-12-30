@@ -6,7 +6,7 @@ class Entity {
     
     this.x = 0
     this.y = 0
-    this._rotation = ROTATIONS.SOUTH;  // Rotation in radians
+    this._rotation = ROTATIONS.SOUTH  // Rotation in radians
     
     this.size = TILE_SIZE
     
@@ -21,21 +21,21 @@ class Entity {
     this.solid = false
     this.movable = false
     
-    // this.moveAcceleration = 0.5;
-    this.moveDeceleration = 0.5;
-    this.moveMaxSpeed = 8;
+    // this.moveAcceleration = 0.5
+    this.moveDeceleration = 0.5
+    this.moveMaxSpeed = 8
   }
   
   play (timeStep) {
     
     // Upkeep: deceleration
-    const moveDeceleration = this.moveDeceleration * timeStep / 1000 || 0;
+    const moveDeceleration = this.moveDeceleration * timeStep / 1000 || 0
     const curRotation = Math.atan2(this.moveY, this.moveX)
-    const curMoveSpeed = Math.sqrt(this.moveX * this.moveX + this.moveY * this.moveY);
-    const newMoveSpeed = Math.max(0, curMoveSpeed - moveDeceleration);
+    const curMoveSpeed = Math.sqrt(this.moveX * this.moveX + this.moveY * this.moveY)
+    const newMoveSpeed = Math.max(0, curMoveSpeed - moveDeceleration)
 
-    this.moveX = newMoveSpeed * Math.cos(curRotation);
-    this.moveY = newMoveSpeed * Math.sin(curRotation);
+    this.moveX = newMoveSpeed * Math.cos(curRotation)
+    this.moveY = newMoveSpeed * Math.sin(curRotation)
     
   }
   
@@ -50,8 +50,8 @@ class Entity {
       c2d.fillStyle = '#e42'
     }
     
-    c2d.beginPath();
-    c2d.arc(this.x, this.y, this.size / 2, 0, 2 * Math.PI);
+    c2d.beginPath()
+    c2d.arc(this.x, this.y, this.size / 2, 0, 2 * Math.PI)
     c2d.fill()
   }
   
@@ -60,4 +60,4 @@ class Entity {
   }
 }
 
-export default Entity;
+export default Entity
