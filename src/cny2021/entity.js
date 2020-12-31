@@ -9,10 +9,8 @@ class Entity {
     
     this.x = 0
     this.y = 0
-    this.size = 32
-    this._rotation = ROTATIONS.SOUTH  // Rotation in radians
-    
     this.size = TILE_SIZE
+    this._rotation = ROTATIONS.SOUTH  // Rotation in radians
     
     // Movement: self locomotion and external (pushed) movement.
     this.moveX = 0
@@ -49,8 +47,7 @@ class Entity {
     c2d.fillStyle = '#844'
     
     // DEBUG
-
-    if (this._app.mode === MODES.ACTION_PLAYER_INTERACTING) {      
+    if (this._app.mode === MODES.ACTION_PLAYER_INTERACTING && this === this._app.player) {
       c2d.fillStyle = '#e42'
     }
     
