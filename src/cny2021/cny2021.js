@@ -1,4 +1,9 @@
-import { GRID_WIDTH, GRID_HEIGHT, TILE_SIZE, EXPECTED_TIMESTEP, MODES, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY } from './constants'
+import {
+  GRID_WIDTH, GRID_HEIGHT, TILE_SIZE,
+  MODES, SHAPES,
+  EXPECTED_TIMESTEP,
+  ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY,
+} from './constants'
 import Entity from './entity'
 import Physics from './physics'
 
@@ -14,6 +19,12 @@ class CNY2021 {
     this.canvas2d = this.html.canvas.getContext('2d')
     this.canvasWidth = TILE_SIZE * GRID_WIDTH
     this.canvasHeight = TILE_SIZE * GRID_HEIGHT
+    
+    this.camera = {
+      target: null,  // Target entity to follow. If null, camera is static.
+      x: 0,
+      y: 0,      
+    }
     
     this.html.canvas.width = this.canvasWidth
     this.html.canvas.height = this.canvasHeight
@@ -77,6 +88,9 @@ class CNY2021 {
     this.mode = MODES.ACTION_IDLE
     this.player = undefined
     this.entities = []
+    this.camera = {
+      target: null, x: 0, y: 0,
+    }
   }
   
   loadLevel (level = 0) {
@@ -86,12 +100,29 @@ class CNY2021 {
     this.player.x = TILE_SIZE * GRID_WIDTH / 2
     this.player.y = TILE_SIZE * GRID_HEIGHT / 2
     this.entities.push(this.player)
+    this.camera.target = this.player
     
-    let testEntity = new Entity(this)
-    let testAngle = Math.random() * 2 * Math.PI
-    let testDistance = (Math.random() * 2 + 2) * TILE_SIZE
+    let testEntity, testAngle, testDistance
+    
+    testEntity = new Entity(this)
+    testAngle = Math.random() * 2 * Math.PI
+    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
     testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
     testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
+    this.entities.push(testEntity)
+    
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.SQUARE
+    testAngle = Math.random() * 2 * Math.PI
+    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
+    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
+    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
+    this.entities.push(testEntity)
+    
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.shapePolygonPath = [-TILE_SIZE, -TILE_SIZE * 4, -TILE_SIZE, TILE_SIZE * 4, TILE_SIZE, TILE_SIZE * 4, TILE_SIZE, -TILE_SIZE * 4]
+    testEntity.movable = false
     this.entities.push(testEntity)
 
   }
@@ -118,6 +149,13 @@ class CNY2021 {
   
   paint () {
     const c2d = this.canvas2d
+    const camera = this.camera
+    
+    // Camera Controls: focus the camera on the target entity, if any.
+    if (camera.target) {
+      camera.x = this.canvasWidth / 2 - camera.target.x
+      camera.y = this.canvasHeight / 2 - camera.target.y
+    }
     
     c2d.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
     
@@ -148,37 +186,39 @@ class CNY2021 {
       c2d.lineWidth = TILE_SIZE / 8
       
       c2d.beginPath()
-      c2d.moveTo(this.player.x, this.player.y)
-      c2d.lineTo(inputCoords.x, inputCoords.y)
+      c2d.moveTo(this.player.x + camera.x, this.player.y + camera.y)
+      c2d.lineTo(inputCoords.x + camera.x, inputCoords.y + camera.y)
       c2d.stroke()
       c2d.beginPath()
-      c2d.arc(inputCoords.x, inputCoords.y, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY, 0, 2 * Math.PI)
+      c2d.arc(inputCoords.x + camera.x, inputCoords.y + camera.y, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY, 0, 2 * Math.PI)
       c2d.stroke()
 
+      /*
       const arrowCoords = {
-        x: this.player.x - (inputCoords.x - this.player.x),
-        y: this.player.y - (inputCoords.y - this.player.y),
+        x: this.player.x - (inputCoords.x - this.player.x) + camera.x,
+        y: this.player.y - (inputCoords.y - this.player.y) + camera.y,
       }
       c2d.strokeStyle = '#e42'
       c2d.lineWidth = TILE_SIZE / 8
       
       c2d.beginPath()
-      c2d.moveTo(this.player.x, this.player.y)
-      c2d.lineTo(arrowCoords.x, arrowCoords.y)
-      c2d.stroke()
+      c2d.moveTo(this.player.x + camera.x, this.player.y + camera.y)
+      c2d.lineTo(arrowCoords.x + camera.x, arrowCoords.y + camera.y)
+      c2d.stroke()*/
     }
   }
   
   onPointerDown (e) {
     const coords = getEventCoords(e, this.html.canvas)
+    const camera = this.camera
     
     this.playerInput.pointerStart = undefined
     this.playerInput.pointerCurrent = undefined
     this.playerInput.pointerEnd = undefined
     
     if (this.player) {
-      const distX = this.player.x - coords.x
-      const distY = this.player.y - coords.y
+      const distX = this.player.x - coords.x + camera.x
+      const distY = this.player.y - coords.y + camera.y
       const distFromPlayer = Math.sqrt(distX * distX + distY + distY)
       const rotation = Math.atan2(distY, distX)
       

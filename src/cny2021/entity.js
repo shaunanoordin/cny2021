@@ -43,16 +43,47 @@ class Entity {
   
   paint () {
     const c2d = this._app.canvas2d
+    const camera = this._app.camera
     
-    c2d.fillStyle = '#844'
+    c2d.fillStyle = '#888'
     
-    // DEBUG
-    if (this._app.mode === MODES.ACTION_PLAYER_INTERACTING && this === this._app.player) {
-      c2d.fillStyle = '#e42'
+    // DEBUG: Player colours
+    if ( this === this._app.player) {
+      c2d.fillStyle = '#c44'
+      if (this._app.mode === MODES.ACTION_PLAYER_INTERACTING) {
+        c2d.fillStyle = '#e42'
+      }
     }
     
+    // DEBUG: shape outline
+    switch (this.shape) {
+    case SHAPES.CIRCLE:
+      c2d.beginPath()
+      c2d.arc(this.x + camera.x, this.y + camera.y, this.size / 2, 0, 2 * Math.PI)
+      c2d.fill()
+      c2d.closePath()
+      break
+    case SHAPES.SQUARE:
+      c2d.beginPath()
+      c2d.rect(this.x + camera.x - this.size / 2, this.y + camera.y - this.size / 2, this.size, this.size)
+      c2d.fill()
+      c2d.closePath()
+      break
+    case SHAPES.POLYGON:
+      c2d.beginPath()
+      let coords = this.vertices
+      if (coords.length >= 1) c2d.moveTo(coords[coords.length-1].x + camera.x, coords[coords.length-1].y + camera.y)
+      for (let i = 0 ; i < coords.length ; i++) {
+        c2d.lineTo(coords[i].x + camera.x, coords[i].y + camera.y)
+      }            
+      c2d.fill()
+      c2d.closePath()
+      break
+    }
+    
+    c2d.fillStyle = '#000'
     c2d.beginPath()
-    c2d.arc(this.x, this.y, this.size / 2, 0, 2 * Math.PI)
+    c2d.arc(this.x + camera.x, this.y + camera.y, 2, 0, 2 * Math.PI)
     c2d.fill()
   }
   
