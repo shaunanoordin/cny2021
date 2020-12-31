@@ -1,7 +1,8 @@
 import { GRID_WIDTH, GRID_HEIGHT, TILE_SIZE, EXPECTED_TIMESTEP, MODES, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY } from './constants'
 import Entity from './entity'
+import Physics from './physics'
 
-class App {
+class CNY2021 {
   constructor () {
     this.html = {
       console: document.getElementById("console"),
@@ -86,6 +87,13 @@ class App {
     this.player.y = TILE_SIZE * GRID_HEIGHT / 2
     this.entities.push(this.player)
     
+    let testEntity = new Entity(this)
+    let testAngle = Math.random() * 2 * Math.PI
+    let testDistance = (Math.random() * 2 + 2) * TILE_SIZE
+    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
+    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
+    this.entities.push(testEntity)
+
   }
   
   main (time) {
@@ -246,7 +254,7 @@ class App {
       for (let b = a + 1 ; b < this.entities.length ; b++) {
         let entityB = this.entities[b]
         let collisionCorrection = Physics.checkCollision(entityA, entityB)
-                
+        
         if (collisionCorrection) {
           entityA.x = collisionCorrection.ax
           entityA.y = collisionCorrection.ay
@@ -278,4 +286,4 @@ function stopEvent (e) {
   return false
 }
 
-export default App
+export default CNY2021

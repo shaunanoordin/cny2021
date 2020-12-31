@@ -1,6 +1,6 @@
-import App from './cny2021'
+import CNY2021 from './cny2021'
 
-var app
+var cny2021
 window.onload = function() {
-  window.app = new App()
+  window.cny2021 = new CNY2021()
 }

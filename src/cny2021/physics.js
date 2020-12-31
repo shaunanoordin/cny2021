@@ -2,7 +2,7 @@ import { SHAPES } from './constants'
 
 const USE_CIRCLE_APPROXIMATION = false
 
-export class Physics {
+export default class Physics {
   
   //----------------------------------------------------------------
   

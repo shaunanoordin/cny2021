@@ -1,3 +1,3 @@
-import App from './app'
+import CNY2021 from './cny2021'
 
-export default App
+export default CNY2021
