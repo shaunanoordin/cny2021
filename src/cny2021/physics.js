@@ -8,7 +8,8 @@ export default class Physics {
   
   /*  Checks if objA is touching objB.
       If true, returns the corrected coordinates for objA and objB, in form:
-        { ax, ay, bx, by }
+        { a: { x, y },
+          b: { x, y } }
       If false, returns null.
    */
   static checkCollision (objA, objB) {
@@ -40,10 +41,8 @@ export default class Physics {
       let correction = Physics.checkCollision_circlePolygon(objB, objA)
       if (correction) {
         correction = {
-          ax: correction.bx,
-          ay: correction.by,
-          bx: correction.ax,
-          by: correction.ay,
+          a: correction.b,
+          b: correction.a,
         }
       }
       return correction
@@ -78,10 +77,14 @@ export default class Physics {
       const sinAngle = Math.sin(angle)
 
       return {
-        ax: objA.x - cosAngle * (correctDist - dist) * fractionA,
-        ay: objA.y - sinAngle * (correctDist - dist) * fractionA,
-        bx: objB.x + cosAngle * (correctDist - dist) * fractionB,
-        by: objB.y + sinAngle * (correctDist - dist) * fractionB,
+        a: {
+          x: objA.x - cosAngle * (correctDist - dist) * fractionA,
+          y: objA.y - sinAngle * (correctDist - dist) * fractionA,
+        },
+        b: {
+          x: objB.x + cosAngle * (correctDist - dist) * fractionB,
+          y: objB.y + sinAngle * (correctDist - dist) * fractionB,
+        }
       }
     }
     
@@ -137,10 +140,14 @@ export default class Physics {
 
     if (correction && correction.magnitude > 0) {
       return {
-        ax: objA.x - correction.x * fractionA,
-        ay: objA.y - correction.y * fractionA,
-        bx: objB.x + correction.x * fractionB,
-        by: objB.y + correction.y * fractionB,
+        a: {
+          x: objA.x - correction.x * fractionA,
+          y: objA.y - correction.y * fractionA,
+        },
+        b: {
+          x: objB.x + correction.x * fractionB,
+          y: objB.y + correction.y * fractionB,
+        }
       }
     }
     
@@ -199,10 +206,14 @@ export default class Physics {
 
     if (correction && correction.magnitude > 0) {
       return {
-        ax: objA.x - correction.x * fractionA,
-        ay: objA.y - correction.y * fractionA,
-        bx: objB.x + correction.x * fractionB,
-        by: objB.y + correction.y * fractionB,
+        a: {
+          x: objA.x - correction.x * fractionA,
+          y: objA.y - correction.y * fractionA,
+        },
+        b: {
+          x: objB.x + correction.x * fractionB,
+          y: objB.y + correction.y * fractionB,
+        }
       }
     }
   }

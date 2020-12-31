@@ -256,12 +256,12 @@ class CNY2021 {
         let collisionCorrection = Physics.checkCollision(entityA, entityB)
         
         if (collisionCorrection) {
-          entityA.x = collisionCorrection.ax
-          entityA.y = collisionCorrection.ay
-          entityB.x = collisionCorrection.bx
-          entityB.y = collisionCorrection.by
-          entityA.onCollision(entityB, collisionCorrection)
-          entityB.onCollision(entityA, collisionCorrection)
+          entityA.x = collisionCorrection.a.x
+          entityA.y = collisionCorrection.a.y
+          entityB.x = collisionCorrection.b.x
+          entityB.y = collisionCorrection.b.y
+          entityA.onCollision(entityB, collisionCorrection.a)
+          entityB.onCollision(entityA, collisionCorrection.b)
         }
       }
     }  
