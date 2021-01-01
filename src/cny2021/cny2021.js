@@ -119,11 +119,42 @@ class CNY2021 {
     testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
     this.entities.push(testEntity)
     
+    // West wall
     testEntity = new Entity(this)
     testEntity.shape = SHAPES.POLYGON
-    testEntity.shapePolygonPath = [-TILE_SIZE, -TILE_SIZE * 4, -TILE_SIZE, TILE_SIZE * 4, TILE_SIZE, TILE_SIZE * 4, TILE_SIZE, -TILE_SIZE * 4]
+    testEntity.x = -TILE_SIZE
+    testEntity.y = 0
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
     testEntity.movable = false
     this.entities.push(testEntity)
+    
+    // East wall
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = TILE_SIZE * GRID_WIDTH
+    testEntity.y = 0
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+    
+    // North wall
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = 0
+    testEntity.y = -TILE_SIZE
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+    
+    // South
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = 0
+    testEntity.y = TILE_SIZE * GRID_HEIGHT
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+
 
   }
   
@@ -166,7 +197,7 @@ class CNY2021 {
     for (let row = 0 ; row < GRID_HEIGHT ; row ++) {
       for (let col = 0 ; col < GRID_WIDTH ; col ++) {
         c2d.beginPath()
-        c2d.rect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+        c2d.rect(col * TILE_SIZE + camera.x, row * TILE_SIZE + camera.y, TILE_SIZE, TILE_SIZE)
         c2d.stroke()
       }
     }
