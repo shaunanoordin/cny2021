@@ -1,15 +1,6 @@
-/*  
-Bull, China Shop
-----------------
+import CNY2021 from './cny2021'
 
-A game about smashing things.
-
-(Shaun A. Noordin | shaunanoordin.com | 20200711)
- */
-
-import App from './app';
-
-var app
+var cny2021
 window.onload = function() {
-  window.app = new App()
+  window.cny2021 = new CNY2021()
 }

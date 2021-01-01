@@ -1,7 +1,13 @@
-import { GRID_WIDTH, GRID_HEIGHT, TILE_SIZE, EXPECTED_TIMESTEP, MODES, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY } from './constants'
+import {
+  GRID_WIDTH, GRID_HEIGHT, TILE_SIZE,
+  MODES, SHAPES,
+  EXPECTED_TIMESTEP,
+  ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY,
+} from './constants'
 import Entity from './entity'
+import Physics from './physics'
 
-class App {
+class CNY2021 {
   constructor () {
     this.html = {
       console: document.getElementById("console"),
@@ -13,6 +19,12 @@ class App {
     this.canvas2d = this.html.canvas.getContext('2d')
     this.canvasWidth = TILE_SIZE * GRID_WIDTH
     this.canvasHeight = TILE_SIZE * GRID_HEIGHT
+    
+    this.camera = {
+      target: null,  // Target entity to follow. If null, camera is static.
+      x: 0,
+      y: 0,      
+    }
     
     this.html.canvas.width = this.canvasWidth
     this.html.canvas.height = this.canvasHeight
@@ -76,6 +88,9 @@ class App {
     this.mode = MODES.ACTION_IDLE
     this.player = undefined
     this.entities = []
+    this.camera = {
+      target: null, x: 0, y: 0,
+    }
   }
   
   loadLevel (level = 0) {
@@ -85,7 +100,62 @@ class App {
     this.player.x = TILE_SIZE * GRID_WIDTH / 2
     this.player.y = TILE_SIZE * GRID_HEIGHT / 2
     this.entities.push(this.player)
+    this.camera.target = this.player
     
+    let testEntity, testAngle, testDistance
+    
+    testEntity = new Entity(this)
+    testAngle = Math.random() * 2 * Math.PI
+    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
+    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
+    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
+    this.entities.push(testEntity)
+    
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.SQUARE
+    testAngle = Math.random() * 2 * Math.PI
+    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
+    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
+    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
+    this.entities.push(testEntity)
+    
+    // West wall
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = -TILE_SIZE
+    testEntity.y = 0
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+    
+    // East wall
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = TILE_SIZE * GRID_WIDTH
+    testEntity.y = 0
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+    
+    // North wall
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = 0
+    testEntity.y = -TILE_SIZE
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+    
+    // South
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = 0
+    testEntity.y = TILE_SIZE * GRID_HEIGHT
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+
+
   }
   
   main (time) {
@@ -110,6 +180,13 @@ class App {
   
   paint () {
     const c2d = this.canvas2d
+    const camera = this.camera
+    
+    // Camera Controls: focus the camera on the target entity, if any.
+    if (camera.target) {
+      camera.x = this.canvasWidth / 2 - camera.target.x
+      camera.y = this.canvasHeight / 2 - camera.target.y
+    }
     
     c2d.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
     
@@ -120,7 +197,7 @@ class App {
     for (let row = 0 ; row < GRID_HEIGHT ; row ++) {
       for (let col = 0 ; col < GRID_WIDTH ; col ++) {
         c2d.beginPath()
-        c2d.rect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+        c2d.rect(col * TILE_SIZE + camera.x, row * TILE_SIZE + camera.y, TILE_SIZE, TILE_SIZE)
         c2d.stroke()
       }
     }
@@ -140,37 +217,38 @@ class App {
       c2d.lineWidth = TILE_SIZE / 8
       
       c2d.beginPath()
-      c2d.moveTo(this.player.x, this.player.y)
+      c2d.moveTo(this.player.x + camera.x, this.player.y + camera.y)
       c2d.lineTo(inputCoords.x, inputCoords.y)
       c2d.stroke()
       c2d.beginPath()
-      c2d.arc(inputCoords.x, inputCoords.y, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY, 0, 2 * Math.PI);
+      c2d.arc(inputCoords.x, inputCoords.y, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY, 0, 2 * Math.PI)
       c2d.stroke()
-
+      
       const arrowCoords = {
-        x: this.player.x - (inputCoords.x - this.player.x),
-        y: this.player.y - (inputCoords.y - this.player.y),
+        x: this.player.x - (inputCoords.x - this.player.x) + camera.x,
+        y: this.player.y - (inputCoords.y - this.player.y) + camera.y,
       }
       c2d.strokeStyle = '#e42'
       c2d.lineWidth = TILE_SIZE / 8
       
       c2d.beginPath()
-      c2d.moveTo(this.player.x, this.player.y)
-      c2d.lineTo(arrowCoords.x, arrowCoords.y)
+      c2d.moveTo(this.player.x + camera.x, this.player.y + camera.y)
+      c2d.lineTo(arrowCoords.x + camera.x, arrowCoords.y + camera.y)
       c2d.stroke()
     }
   }
   
   onPointerDown (e) {
     const coords = getEventCoords(e, this.html.canvas)
+    const camera = this.camera
     
     this.playerInput.pointerStart = undefined
     this.playerInput.pointerCurrent = undefined
     this.playerInput.pointerEnd = undefined
     
     if (this.player) {
-      const distX = this.player.x - coords.x
-      const distY = this.player.y - coords.y
+      const distX = this.player.x - coords.x + camera.x
+      const distY = this.player.y - coords.y + camera.y
       const distFromPlayer = Math.sqrt(distX * distX + distY + distY)
       const rotation = Math.atan2(distY, distX)
       
@@ -211,9 +289,11 @@ class App {
   shoot () {
     if (!this.player || !this.playerInput.pointerCurrent) return
     
+    const camera = this.camera
+    
     const inputCoords = this.playerInput.pointerCurrent
-    const directionX = this.player.x - inputCoords.x
-    const directionY = this.player.y - inputCoords.y
+    const directionX = this.player.x - inputCoords.x + camera.x
+    const directionY = this.player.y - inputCoords.y + camera.y
     const dist = Math.sqrt(directionX * directionX + directionY * directionY)
     const rotation = Math.atan2(directionY, directionX)
 
@@ -240,20 +320,20 @@ class App {
       entity.y += entity.moveY * timeCorrection
     })
     
-    for (let a = 0; a < this.entities.length; a++) {
+    for (let a = 0 ; a < this.entities.length ; a++) {
       let entityA = this.entities[a]
       
-      for (let b = a + 1; b < this.entities.length; b++) {
+      for (let b = a + 1 ; b < this.entities.length ; b++) {
         let entityB = this.entities[b]
         let collisionCorrection = Physics.checkCollision(entityA, entityB)
-                
+        
         if (collisionCorrection) {
-          entityA.x = collisionCorrection.ax;
-          entityA.y = collisionCorrection.ay;
-          entityB.x = collisionCorrection.bx;
-          entityB.y = collisionCorrection.by;
-          entityA.onCollision(entityB, collisionCorrection);
-          entityB.onCollision(entityA, collisionCorrection);
+          entityA.x = collisionCorrection.a.x
+          entityA.y = collisionCorrection.a.y
+          entityB.x = collisionCorrection.b.x
+          entityB.y = collisionCorrection.b.y
+          entityA.onCollision(entityB, collisionCorrection.a)
+          entityB.onCollision(entityA, collisionCorrection.b)
         }
       }
     }  
@@ -278,4 +358,4 @@ function stopEvent (e) {
   return false
 }
 
-export default App
+export default CNY2021
