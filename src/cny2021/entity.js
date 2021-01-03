@@ -89,6 +89,24 @@ class Entity {
   
   onCollision (target, collisionCorrection) {
     console.log('BONK')
+    
+    if (
+      (this.shape === SHAPES.CIRCLE || this.shape === SHAPES.SQUARE) &&
+      (target.shape === SHAPES.CIRCLE || target.shape === SHAPES.SQUARE)
+    ) {
+      const speed = Math.sqrt(this.moveX * this.moveX + this.moveY * this.moveY)
+      const angle = Math.atan2(collisionCorrection.y - this.y, collisionCorrection.x - this.x)
+      
+      this.moveX = Math.cos(angle) * speed
+      this.moveY = Math.sin(angle) * speed
+      
+      this.x = collisionCorrection.x
+      this.y = collisionCorrection.y
+    } else {
+      this.x = collisionCorrection.x
+      this.y = collisionCorrection.y
+    }
+    
   }
   
   get left () { return this.x - this.size / 2 }
