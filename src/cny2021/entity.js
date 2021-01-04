@@ -89,6 +89,53 @@ class Entity {
   
   onCollision (target, collisionCorrection) {
     console.log('BONK')
+    
+    // when two solid shapes collide, bounce!
+    if (this.movable && this.solid && target.solid) {
+      if (
+        this.shape === SHAPES.CIRCLE && target.shape === SHAPES.CIRCLE
+      ) {
+        
+        // For circle + circle collisions, the collision correction already
+        // tells us the bounce direction.
+        const angle = Math.atan2(collisionCorrection.y - this.y, collisionCorrection.x - this.x)
+        const speed = Math.sqrt(this.moveX * this.moveX + this.moveY * this.moveY)
+
+        this.moveX = Math.cos(angle) * speed
+        this.moveY = Math.sin(angle) * speed
+
+        this.x = collisionCorrection.x
+        this.y = collisionCorrection.y
+        
+      } else if (
+        this.shape === SHAPES.CIRCLE
+        && (target.shape === SHAPES.SQUARE || target.shape === SHAPES.POLYGON)
+      ) {
+        
+        // For circle + polygon collisions, we need to know...
+        // - the original angle this circle was moving towards (or rather, its
+        //   reverse, because we want a bounce)
+        // - the normal vector (of the edge) of the polygon this circle collided
+        //   into (which we can get from the collision correction)
+        // - the angle between them
+        const reverseOriginalAngle = Math.atan2(-this.moveY, -this.moveX)
+        const normalAngle = Math.atan2(collisionCorrection.y - this.y, collisionCorrection.x - this.x)
+        const angleBetween = normalAngle - reverseOriginalAngle
+        const angle = reverseOriginalAngle + 2 * angleBetween
+
+        const speed = Math.sqrt(this.moveX * this.moveX + this.moveY * this.moveY)
+
+        this.moveX = Math.cos(angle) * speed
+        this.moveY = Math.sin(angle) * speed
+        
+      } else {
+        // For the moment, we're not too concerned about polygons bumping into each other
+      }
+    }
+    
+    this.x = collisionCorrection.x
+    this.y = collisionCorrection.y
+    
   }
   
   get left () { return this.x - this.size / 2 }

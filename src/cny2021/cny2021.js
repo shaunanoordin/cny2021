@@ -328,10 +328,10 @@ class CNY2021 {
         let collisionCorrection = Physics.checkCollision(entityA, entityB)
         
         if (collisionCorrection) {
-          entityA.x = collisionCorrection.a.x
+          /*entityA.x = collisionCorrection.a.x
           entityA.y = collisionCorrection.a.y
           entityB.x = collisionCorrection.b.x
-          entityB.y = collisionCorrection.b.y
+          entityB.y = collisionCorrection.b.y*/
           entityA.onCollision(entityB, collisionCorrection.a)
           entityB.onCollision(entityA, collisionCorrection.b)
         }
