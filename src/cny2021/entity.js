@@ -1,5 +1,4 @@
 import { TILE_SIZE, ROTATIONS, DIRECTIONS, SHAPES, MODES } from './constants'
-import Physics from './physics'
 
 class Entity {
   constructor (app) {
