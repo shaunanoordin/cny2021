@@ -15,10 +15,12 @@ export default class Physics {
   static checkCollision (objA, objB) {
     if (!objA || !objB || objA === objB) return null
     
+    // Circle + Circle collision
     if (objA.shape === SHAPES.CIRCLE && objB.shape === SHAPES.CIRCLE) {
       return Physics.checkCollision_circleCircle(objA, objB)
     }
     
+    // Polygon + Polygon collision. (Squares are polygons, of course.)
     else if (
       (objA.shape === SHAPES.SQUARE || objA.shape === SHAPES.POLYGON) &&
       (objB.shape === SHAPES.SQUARE || objB.shape === SHAPES.POLYGON)
@@ -26,6 +28,7 @@ export default class Physics {
       return Physics.checkCollision_polygonPolygon(objA, objB)
     }
     
+    // Circle + Polygon collision.
     else if (
       objA.shape === SHAPES.CIRCLE &&
       (objB.shape === SHAPES.SQUARE || objB.shape === SHAPES.POLYGON)
@@ -35,6 +38,8 @@ export default class Physics {
       return Physics.checkCollision_circlePolygon(objA, objB)
     }
     
+    // Polygon + Circle collision
+    // It's the reverse of the previous scenario.
     else if (
       (objA.shape === SHAPES.SQUARE || objA.shape === SHAPES.POLYGON) &&
       objB.shape === SHAPES.CIRCLE

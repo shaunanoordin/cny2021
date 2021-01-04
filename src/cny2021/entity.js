@@ -91,8 +91,7 @@ class Entity {
     console.log('BONK')
     
     if (
-      (this.shape === SHAPES.CIRCLE || this.shape === SHAPES.SQUARE) &&
-      (target.shape === SHAPES.CIRCLE || target.shape === SHAPES.SQUARE)
+      this.shape === SHAPES.CIRCLE && target.shape === SHAPES.CIRCLE
     ) {
       const speed = Math.sqrt(this.moveX * this.moveX + this.moveY * this.moveY)
       const angle = Math.atan2(collisionCorrection.y - this.y, collisionCorrection.x - this.x)
@@ -102,6 +101,33 @@ class Entity {
       
       this.x = collisionCorrection.x
       this.y = collisionCorrection.y
+    } else if (
+      this.shape === SHAPES.CIRCLE
+      && (target.shape === SHAPES.SQUARE || target.shape === SHAPES.POLYGON)
+    ) {
+      // TODO
+      
+      const speed = Math.sqrt(this.moveX * this.moveX + this.moveY * this.moveY)
+      const originalAngle = Math.atan2(this.moveY, this.moveX)
+      const reverseOriginalAngle = Math.atan2(-this.moveY, -this.moveX)
+      const normalAngle = Math.atan2(collisionCorrection.y - this.y, collisionCorrection.x - this.x)
+      
+      const toDegree = (rad) => (rad * 180 / Math.PI).toFixed(2)
+      
+      if (this === this._app.player) {
+        console.log('original angle: ', toDegree(originalAngle))
+        console.log('rev ori angle: ', toDegree(reverseOriginalAngle))
+        console.log('normal angle: ', toDegree(normalAngle))
+      }
+      
+      const angle = normalAngle
+      
+      this.moveX = Math.cos(angle) * speed
+      this.moveY = Math.sin(angle) * speed
+      
+      this.x = collisionCorrection.x
+      this.y = collisionCorrection.y
+      
     } else {
       this.x = collisionCorrection.x
       this.y = collisionCorrection.y
