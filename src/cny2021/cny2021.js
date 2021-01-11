@@ -306,8 +306,8 @@ class CNY2021 {
     
     console.log('MOVEMENT SPEED: ', movementSpeed)
     
-    this.player.moveX = Math.cos(rotation) * movementSpeed
-    this.player.moveY = Math.sin(rotation) * movementSpeed
+    this.player.speedX = Math.cos(rotation) * movementSpeed
+    this.player.speedY = Math.sin(rotation) * movementSpeed
     
   }
   
@@ -316,8 +316,8 @@ class CNY2021 {
     
     // Move Actors and Particles
     this.entities.forEach(entity => {
-      entity.x += entity.moveX * timeCorrection
-      entity.y += entity.moveY * timeCorrection
+      entity.x += entity.speedX * timeCorrection
+      entity.y += entity.speedY * timeCorrection
     })
     
     for (let a = 0 ; a < this.entities.length ; a++) {
