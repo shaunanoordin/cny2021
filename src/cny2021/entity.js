@@ -92,7 +92,10 @@ class Entity {
     console.log('BONK')
     
     // when two solid shapes collide, bounce!
-    if (this.movable && this.solid && target.solid) {
+    if (
+      this.movable && this.solid
+      && !target.movable && target.solid
+    ) {
       if (
         this.shape === SHAPES.CIRCLE && target.shape === SHAPES.CIRCLE
       ) {
