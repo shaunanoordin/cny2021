@@ -13,8 +13,8 @@ class Entity {
     this._rotation = ROTATIONS.SOUTH  // Rotation in radians
     
     // Movement: self locomotion and external (pushed) movement.
-    this.moveX = 0
-    this.moveY = 0
+    this.speedX = 0
+    this.speedY = 0
     this.pushX = 0
     this.pushY = 0
     
@@ -22,6 +22,7 @@ class Entity {
     this.shapePolygonPath = null  // Only applicable if shape === SHAPES.POLYGON
     this.solid = true
     this.movable = true
+    this.mass = 1  // Only matters if solid && movable
     
     // this.moveAcceleration = 0.5
     this.moveDeceleration = 0.5
@@ -32,12 +33,12 @@ class Entity {
     
     // Upkeep: deceleration
     const moveDeceleration = this.moveDeceleration * timeStep / 1000 || 0
-    const curRotation = Math.atan2(this.moveY, this.moveX)
-    const curMoveSpeed = Math.sqrt(this.moveX * this.moveX + this.moveY * this.moveY)
+    const curRotation = Math.atan2(this.speedY, this.speedX)
+    const curMoveSpeed = Math.sqrt(this.speedX * this.speedX + this.speedY * this.speedY)
     const newMoveSpeed = Math.max(0, curMoveSpeed - moveDeceleration)
 
-    this.moveX = newMoveSpeed * Math.cos(curRotation)
-    this.moveY = newMoveSpeed * Math.sin(curRotation)
+    this.speedX = newMoveSpeed * Math.cos(curRotation)
+    this.speedY = newMoveSpeed * Math.sin(curRotation)
     
   }
   
@@ -91,7 +92,10 @@ class Entity {
     console.log('BONK')
     
     // when two solid shapes collide, bounce!
-    if (this.movable && this.solid && target.solid) {
+    if (
+      this.movable && this.solid
+      && !target.movable && target.solid
+    ) {
       if (
         this.shape === SHAPES.CIRCLE && target.shape === SHAPES.CIRCLE
       ) {
@@ -99,10 +103,10 @@ class Entity {
         // For circle + circle collisions, the collision correction already
         // tells us the bounce direction.
         const angle = Math.atan2(collisionCorrection.y - this.y, collisionCorrection.x - this.x)
-        const speed = Math.sqrt(this.moveX * this.moveX + this.moveY * this.moveY)
+        const speed = Math.sqrt(this.speedX * this.speedX + this.speedY * this.speedY)
 
-        this.moveX = Math.cos(angle) * speed
-        this.moveY = Math.sin(angle) * speed
+        this.speedX = Math.cos(angle) * speed
+        this.speedY = Math.sin(angle) * speed
 
         this.x = collisionCorrection.x
         this.y = collisionCorrection.y
@@ -118,19 +122,27 @@ class Entity {
         // - the normal vector (of the edge) of the polygon this circle collided
         //   into (which we can get from the collision correction)
         // - the angle between them
-        const reverseOriginalAngle = Math.atan2(-this.moveY, -this.moveX)
+        const reverseOriginalAngle = Math.atan2(-this.speedY, -this.speedX)
         const normalAngle = Math.atan2(collisionCorrection.y - this.y, collisionCorrection.x - this.x)
         const angleBetween = normalAngle - reverseOriginalAngle
         const angle = reverseOriginalAngle + 2 * angleBetween
 
-        const speed = Math.sqrt(this.moveX * this.moveX + this.moveY * this.moveY)
+        const speed = Math.sqrt(this.speedX * this.speedX + this.speedY * this.speedY)
 
-        this.moveX = Math.cos(angle) * speed
-        this.moveY = Math.sin(angle) * speed
+        this.speedX = Math.cos(angle) * speed
+        this.speedY = Math.sin(angle) * speed
         
       } else {
         // For the moment, we're not too concerned about polygons bumping into each other
       }
+    } else if (
+      this.movable && this.solid
+      && target.movable && target.solid
+      && collisionCorrection.speedX !== undefined
+      && collisionCorrection.speedY !== undefined
+    ) {
+      this.speedX = collisionCorrection.speedX
+      this.speedY = collisionCorrection.speedY
     }
     
     this.x = collisionCorrection.x
@@ -203,6 +215,14 @@ class Entity {
       }
     }
     return v
+  }
+  
+  get movementSpeed () {
+    return Math.sqrt(this.speedX * this.speedX + this.speedY * this.speedY)
+  }
+  
+  get movementAngle () {
+    return Math.atan2(this.speedY, this.speedX)
   }
 }
 
