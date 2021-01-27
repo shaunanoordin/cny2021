@@ -135,6 +135,12 @@ class Entity {
       } else {
         // For the moment, we're not too concerned about polygons bumping into each other
       }
+    } else if (
+      this.movable && this.solid
+      && target.movable && target.solid
+    ) {
+      this.speedX = collisionCorrection.speedX || this.speedX
+      this.speedY = collisionCorrection.speedY || this.speedY
     }
     
     this.x = collisionCorrection.x
