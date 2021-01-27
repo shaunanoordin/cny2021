@@ -47,9 +47,12 @@ class Entity {
     const camera = this._app.camera
     
     c2d.fillStyle = '#888'
+    if (this.movable && this.solid) {
+      c2d.fillStyle = '#48c'
+    }
     
     // DEBUG: Player colours
-    if ( this === this._app.player) {
+    if (this === this._app.player) {
       c2d.fillStyle = '#c44'
       if (this._app.mode === MODES.ACTION_PLAYER_INTERACTING) {
         c2d.fillStyle = '#e42'
@@ -108,9 +111,6 @@ class Entity {
         this.speedX = Math.cos(angle) * speed
         this.speedY = Math.sin(angle) * speed
 
-        this.x = collisionCorrection.x
-        this.y = collisionCorrection.y
-        
       } else if (
         this.shape === SHAPES.CIRCLE
         && (target.shape === SHAPES.SQUARE || target.shape === SHAPES.POLYGON)
