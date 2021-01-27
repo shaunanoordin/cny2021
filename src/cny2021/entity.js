@@ -138,9 +138,11 @@ class Entity {
     } else if (
       this.movable && this.solid
       && target.movable && target.solid
+      && collisionCorrection.speedX !== undefined
+      && collisionCorrection.speedY !== undefined
     ) {
-      this.speedX = collisionCorrection.speedX || this.speedX
-      this.speedY = collisionCorrection.speedY || this.speedY
+      this.speedX = collisionCorrection.speedX
+      this.speedY = collisionCorrection.speedY
     }
     
     this.x = collisionCorrection.x
