@@ -208,6 +208,14 @@ class Entity {
     }
     return v
   }
+  
+  get movementSpeed () {
+    return Math.sqrt(this.speedX * this.speedX + this.speedY * this.speedY)
+  }
+  
+  get movementAngle () {
+    return Math.atan2(this.speedY, this.speedX)
+  }
 }
 
 const CIRCLE_TO_POLYGON_APPROXIMATOR =

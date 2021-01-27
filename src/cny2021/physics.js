@@ -83,15 +83,21 @@ export default class Physics {
       const correctDist = minimumDist
       const cosAngle = Math.cos(angle)
       const sinAngle = Math.sin(angle)
+      
+      const motion = Physics.getPostCollisionMotion(objA, objB)
 
       return {
         a: {
           x: objA.x - cosAngle * (correctDist - dist) * fractionA,
           y: objA.y - sinAngle * (correctDist - dist) * fractionA,
+          speedX: motion && motion.a.speedX,
+          speedY: motion && motion.a.speedY,
         },
         b: {
           x: objB.x + cosAngle * (correctDist - dist) * fractionB,
           y: objB.y + sinAngle * (correctDist - dist) * fractionB,
+          speedX: motion && motion.b.speedX,
+          speedY: motion && motion.b.speedY,
         }
       }
     }
@@ -259,6 +265,61 @@ export default class Physics {
       }
     })
     //--------------------------------
+  }
+
+  //----------------------------------------------------------------
+
+  static getPostCollisionMotion (objA, objB) {
+    if (!objA || !objB) return null
+    
+    if (
+      !objA.movable || !objA.solid || objA.mass === 0
+      || !objB.movable || !objB.solid || objB.mass === 0
+      || (objA.mass + objB.mass) === 0
+    ) return null
+    
+    const collisionAngle = Math.atan2(objB.y - objA.y, objB.x - objA.x)
+    const ANGLE_90 = Math.PI / 2
+    const totalMass = objA.mass + objB.mass
+    const aSpd = objA.movementSpeed
+    const bSpd = objB.movementSpeed
+    const aAng = objA.movementAngle
+    const bAng = objB.movementAngle
+    const aMass = objA.mass
+    const bMass = objB.mass
+    
+    const aGroup =
+      ( aSpd * Math.cos(aAng - collisionAngle) * (aMass - bMass)
+        + 2 * bMass * bSpd * Math.cos(bAng - collisionAngle)
+      ) / totalMass
+    const bGroup =
+      ( bSpd * Math.cos(bAng - collisionAngle) * (bMass - aMass)
+        + 2 * aMass * aSpd * Math.cos(aAng - collisionAngle)
+      ) / totalMass
+    
+    const objA_speedX =
+      aGroup * Math.cos(collisionAngle)
+      + aSpd * Math.sin(aAng - collisionAngle) * Math.cos(collisionAngle + ANGLE_90)
+    const objA_speedY =
+      aGroup * Math.sin(collisionAngle)
+      + aSpd * Math.sin(aAng - collisionAngle) * Math.sin(collisionAngle + ANGLE_90)
+    const objB_speedX =
+      bGroup * Math.cos(collisionAngle)
+      + bSpd * Math.sin(bAng - collisionAngle) * Math.cos(collisionAngle + ANGLE_90)
+    const objB_speedY =
+      bGroup * Math.sin(collisionAngle)
+      + bSpd * Math.sin(bAng - collisionAngle) * Math.sin(collisionAngle + ANGLE_90)
+    
+    return {
+      a: {
+        speedX: objA_speedX,
+        speedY: objA_speedY,
+      },
+      b: {
+        speedX: objB_speedX,
+        speedY: objB_speedY,
+      },
+    }
   }
   
   //----------------------------------------------------------------
