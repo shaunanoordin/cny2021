@@ -76,6 +76,7 @@ table {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+  position: relative;
 
   #canvas {
     flex: 0 0 auto;
@@ -86,5 +87,14 @@ table {
     cursor: pointer;
     user-select: none;
     touch-action: none;
+  }
+  
+  #interaction {
+    display: block;
+    overflow: auto;
+    position: absolute;
+    border: 1px solid red;
+    visibility: visible;
+    background: rgba(128, 128, 128, 0.5);
   }
 }

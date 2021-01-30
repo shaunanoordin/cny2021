@@ -63,6 +63,7 @@ table th {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+  position: relative;
 }
 #app > main #canvas {
   flex: 0 0 auto;
@@ -73,6 +74,14 @@ table th {
   cursor: pointer;
   user-select: none;
   touch-action: none;
+}
+#app > main #interaction {
+  display: block;
+  overflow: auto;
+  position: absolute;
+  border: 1px solid red;
+  visibility: visible;
+  background: rgba(128, 128, 128, 0.5);
 }
 
 /*# sourceMappingURL=main.css.map */

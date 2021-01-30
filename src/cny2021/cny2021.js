@@ -10,8 +10,8 @@ import Physics from './physics'
 class CNY2021 {
   constructor () {
     this.html = {
-      console: document.getElementById("console"),
-      canvas: document.getElementById("canvas"),
+      canvas: document.getElementById('canvas'),
+      interaction: document.getElementById('interaction'),
     }
     
     this.mode = MODES.INITIALISING
@@ -39,6 +39,9 @@ class CNY2021 {
     this.html.canvas.addEventListener('touchmove', stopEvent)
     this.html.canvas.addEventListener('touchend', stopEvent)
     this.html.canvas.addEventListener('touchcancel', stopEvent)
+    
+    window.addEventListener('resize', this.updateUI.bind(this))
+    this.updateUI()
     
     this.ready = false
     this.assets = {
@@ -155,7 +158,6 @@ class CNY2021 {
     testEntity.movable = false
     this.entities.push(testEntity)
 
-
   }
   
   main (time) {
@@ -260,6 +262,15 @@ class CNY2021 {
     }
     
     return stopEvent(e)
+  }
+  
+  updateUI () {
+    // Fit the Interaction layer to the canvas
+    const canvasBounds = this.html.canvas.getBoundingClientRect()
+    this.html.interaction.style.width = `${canvasBounds.width}px`
+    this.html.interaction.style.height = `${canvasBounds.height}px`
+    this.html.interaction.style.top = '0'
+    this.html.interaction.style.left = `${canvasBounds.left}px`
   }
   
   onPointerMove (e) {
