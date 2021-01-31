@@ -18,8 +18,8 @@ class CNY2021 {
     }
     
     this.mode = MODES.INITIALISING
-    this.interaction = false
-    this.setInteraction(false)
+    this.interactionUI = false
+    this.setInteractionUI(false)
     
     this.canvas2d = this.html.canvas.getContext('2d')
     this.canvasWidth = TILE_SIZE * GRID_WIDTH
@@ -285,9 +285,9 @@ class CNY2021 {
     this.html.interaction.style.left = `${canvasBounds.left}px`
   }
   
-  setInteraction (interaction) {
-    this.interaction = interaction
-    if (interaction) {
+  setInteractionUI (interactionUI) {
+    this.interactionUI = interactionUI
+    if (interactionUI) {
       this.html.interaction.style.visibility = 'visible'
     } else {
       this.html.interaction.style.visibility = 'hidden'
@@ -319,7 +319,7 @@ class CNY2021 {
   }
   
   buttonHome_onClick () {
-    this.setInteraction(!this.interaction)
+    this.setInteractionUI(!this.interactionUI)
   }
   
   buttonFullscreen_onClick () {
