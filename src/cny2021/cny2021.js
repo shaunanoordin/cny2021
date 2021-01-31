@@ -17,7 +17,6 @@ class CNY2021 {
       buttonFullscreen: document.getElementById('button-fullscreen'),
     }
     
-    this.mode = MODES.INITIALISING
     this.interactionUI = false
     this.setInteractionUI(false)
     
@@ -33,7 +32,7 @@ class CNY2021 {
     
     this.initialiseUI()
     
-    this.ready = false
+    this.initialised = false
     this.assets = {
       // ...
     }
@@ -41,6 +40,7 @@ class CNY2021 {
     this.player = null
     this.entities = []
     
+    this.mode = MODES.INITIALISING
     this.playerInput = {
       pointerStart: undefined,
       pointerCurrent: undefined,
@@ -72,7 +72,7 @@ class CNY2021 {
     this.canvas2d.fillText(`Loading ${numLoadedAssets} / ${numTotalAssets} `, TILE_SIZE, TILE_SIZE)
     
     if (allAssetsLoaded) {
-      this.ready = true
+      this.initialised = true
       this.loadLevel(0)
     }
   }
@@ -154,7 +154,7 @@ class CNY2021 {
     const timeStep = (this.prevTime) ? time - this.prevTime : time
     this.prevTime = time
     
-    if (this.ready) {
+    if (this.initialised) {
       this.play(timeStep)
       this.paint()
     } else {
@@ -165,9 +165,10 @@ class CNY2021 {
   }
   
   play (timeStep) {
-    this.entities.forEach(entity => entity.play(timeStep))
-    
-    this.processPhysics(timeStep)
+    if (!this.interactionUI) {
+      this.entities.forEach(entity => entity.play(timeStep))
+      this.processPhysics(timeStep)
+    }
   }
   
   paint () {
