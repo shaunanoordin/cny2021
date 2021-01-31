@@ -1,4 +1,4 @@
-import { TILE_SIZE, ROTATIONS, DIRECTIONS, SHAPES, MODES } from './constants'
+import { TILE_SIZE, ROTATIONS, DIRECTIONS, SHAPES, PLAYER_ACTIONS } from './constants'
 
 class Entity {
   constructor (app) {
@@ -54,7 +54,7 @@ class Entity {
     // DEBUG: Player colours
     if (this === this._app.player) {
       c2d.fillStyle = '#c44'
-      if (this._app.mode === MODES.ACTION_PLAYER_INTERACTING) {
+      if (this._app.playerAction === PLAYER_ACTIONS.PULLING) {
         c2d.fillStyle = '#e42'
       }
     }

@@ -1,6 +1,6 @@
 import {
   GRID_WIDTH, GRID_HEIGHT, TILE_SIZE,
-  MODES, SHAPES,
+  PLAYER_ACTIONS, SHAPES,
   EXPECTED_TIMESTEP,
   ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY,
 } from './constants'
@@ -40,7 +40,7 @@ class CNY2021 {
     this.player = null
     this.entities = []
     
-    this.mode = MODES.INITIALISING
+    this.playerAction = PLAYER_ACTIONS.IDLE
     this.playerInput = {
       pointerStart: undefined,
       pointerCurrent: undefined,
@@ -78,12 +78,12 @@ class CNY2021 {
   }
   
   resetLevel () {
-    this.mode = MODES.ACTION_IDLE
     this.player = undefined
     this.entities = []
     this.camera = {
       target: null, x: 0, y: 0,
     }
+    this.playerAction = PLAYER_ACTIONS.IDLE
   }
   
   loadLevel (level = 0) {
@@ -150,6 +150,11 @@ class CNY2021 {
 
   }
   
+  /*
+  Main logic
+  ----------------------------------------------------------------------------
+  */
+  
   main (time) {
     const timeStep = (this.prevTime) ? time - this.prevTime : time
     this.prevTime = time
@@ -199,7 +204,7 @@ class CNY2021 {
     this.entities.forEach(entity => entity.paint())
     
     // Draw player input
-    if (this.mode === MODES.ACTION_PLAYER_INTERACTING
+    if (this.playerAction === PLAYER_ACTIONS.PULLING
         && this.player
         && this.playerInput.pointerCurrent
        ) {
@@ -231,29 +236,10 @@ class CNY2021 {
     }
   }
   
-  onPointerDown (e) {
-    const coords = getEventCoords(e, this.html.canvas)
-    const camera = this.camera
-    
-    this.playerInput.pointerStart = undefined
-    this.playerInput.pointerCurrent = undefined
-    this.playerInput.pointerEnd = undefined
-    
-    if (this.player) {
-      const distX = this.player.x - coords.x + camera.x
-      const distY = this.player.y - coords.y + camera.y
-      const distFromPlayer = Math.sqrt(distX * distX + distY + distY)
-      const rotation = Math.atan2(distY, distX)
-      
-      if (distFromPlayer < ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY) {
-        this.mode = MODES.ACTION_PLAYER_INTERACTING
-        this.playerInput.pointerStart = coords
-        this.playerInput.pointerCurrent = coords
-      }
-    }
-    
-    return stopEvent(e)
-  }
+  /*
+  UI and event handling
+  ----------------------------------------------------------------------------
+  */
   
   initialiseUI () {
     this.html.canvas.width = this.canvasWidth
@@ -295,11 +281,35 @@ class CNY2021 {
     }
   }
   
+  onPointerDown (e) {
+    const coords = getEventCoords(e, this.html.canvas)
+    const camera = this.camera
+    
+    this.playerInput.pointerStart = undefined
+    this.playerInput.pointerCurrent = undefined
+    this.playerInput.pointerEnd = undefined
+    
+    if (this.player) {
+      const distX = this.player.x - coords.x + camera.x
+      const distY = this.player.y - coords.y + camera.y
+      const distFromPlayer = Math.sqrt(distX * distX + distY + distY)
+      const rotation = Math.atan2(distY, distX)
+      
+      if (distFromPlayer < ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY) {
+        this.playerAction = PLAYER_ACTIONS.PULLING
+        this.playerInput.pointerStart = coords
+        this.playerInput.pointerCurrent = coords
+      }
+    }
+    
+    return stopEvent(e)
+  }
+  
   onPointerMove (e) {
     const coords = getEventCoords(e, this.html.canvas)
     this.playerInput.pointerCurrent = coords
     
-    if (this.mode === MODES.ACTION_PLAYER_INTERACTING) {
+    if (this.playerAction === PLAYER_ACTIONS.PULLING) {
       // ...
     }
     
@@ -309,10 +319,9 @@ class CNY2021 {
   onPointerUp (e) {
     const coords = getEventCoords(e, this.html.canvas)
     
-    if (this.mode === MODES.ACTION_PLAYER_INTERACTING) {
+    if (this.playerAction === PLAYER_ACTIONS.PULLING) {
       this.playerInput.pointerEnd = coords
-      // this.mode = MODES.ACTION_MOVEMENT
-      this.mode = MODES.ACTION_IDLE
+      this.playerAction = PLAYER_ACTIONS.IDLE
       this.shoot()
     }
     
@@ -359,7 +368,6 @@ class CNY2021 {
     
     this.player.speedX = Math.cos(rotation) * movementSpeed
     this.player.speedY = Math.sin(rotation) * movementSpeed
-    
   }
   
   processPhysics (timeStep) {
