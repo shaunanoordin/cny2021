@@ -10,8 +10,11 @@ import Physics from './physics'
 class CNY2021 {
   constructor () {
     this.html = {
+      main: document.getElementById('main'),
       canvas: document.getElementById('canvas'),
       interaction: document.getElementById('interaction'),
+      buttonHome: document.getElementById('button-home'),
+      buttonFullscreen: document.getElementById('button-fullscreen'),
     }
     
     this.mode = MODES.INITIALISING
@@ -26,22 +29,7 @@ class CNY2021 {
       y: 0,      
     }
     
-    this.html.canvas.width = this.canvasWidth
-    this.html.canvas.height = this.canvasHeight
-    
-    this.html.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this))
-    this.html.canvas.addEventListener('pointermove', this.onPointerMove.bind(this))
-    this.html.canvas.addEventListener('pointerup', this.onPointerUp.bind(this))
-    this.html.canvas.addEventListener('pointercancel', this.onPointerUp.bind(this))
-    
-    // Prevent "touch and hold to open context menu" interaction on touchscreens.
-    this.html.canvas.addEventListener('touchstart', stopEvent)
-    this.html.canvas.addEventListener('touchmove', stopEvent)
-    this.html.canvas.addEventListener('touchend', stopEvent)
-    this.html.canvas.addEventListener('touchcancel', stopEvent)
-    
-    window.addEventListener('resize', this.updateUI.bind(this))
-    this.updateUI()
+    this.initialiseUI()
     
     this.ready = false
     this.assets = {
@@ -264,6 +252,28 @@ class CNY2021 {
     return stopEvent(e)
   }
   
+  initialiseUI () {
+    this.html.canvas.width = this.canvasWidth
+    this.html.canvas.height = this.canvasHeight
+    
+    this.html.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this))
+    this.html.canvas.addEventListener('pointermove', this.onPointerMove.bind(this))
+    this.html.canvas.addEventListener('pointerup', this.onPointerUp.bind(this))
+    this.html.canvas.addEventListener('pointercancel', this.onPointerUp.bind(this))
+    
+    // Prevent "touch and hold to open context menu" interaction on touchscreens.
+    this.html.canvas.addEventListener('touchstart', stopEvent)
+    this.html.canvas.addEventListener('touchmove', stopEvent)
+    this.html.canvas.addEventListener('touchend', stopEvent)
+    this.html.canvas.addEventListener('touchcancel', stopEvent)
+    
+    this.html.buttonHome.addEventListener('click', this.buttonHome_onClick.bind(this))
+    this.html.buttonFullscreen.addEventListener('click', this.buttonFullscreen_onClick.bind(this))
+    
+    window.addEventListener('resize', this.updateUI.bind(this))
+    this.updateUI()
+  }
+  
   updateUI () {
     // Fit the Interaction layer to the canvas
     const canvasBounds = this.html.canvas.getBoundingClientRect()
@@ -295,6 +305,24 @@ class CNY2021 {
     }
     
     return stopEvent(e)
+  }
+  
+  buttonHome_onClick () {
+    
+  }
+  
+  buttonFullscreen_onClick () {
+    const isFullscreen = document.fullscreenElement
+    if (!isFullscreen) {
+      if (this.html.main.requestFullscreen) {
+        this.html.main.className = 'fullscreen'
+        this.html.main.requestFullscreen()
+      }
+    } else {
+      document.exitFullscreen?.()
+      this.html.main.className = ''
+    }
+    this.updateUI()
   }
   
   shoot () {
