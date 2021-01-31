@@ -18,6 +18,8 @@ class CNY2021 {
     }
     
     this.mode = MODES.INITIALISING
+    this.interaction = false
+    this.setInteraction(false)
     
     this.canvas2d = this.html.canvas.getContext('2d')
     this.canvasWidth = TILE_SIZE * GRID_WIDTH
@@ -283,6 +285,15 @@ class CNY2021 {
     this.html.interaction.style.left = `${canvasBounds.left}px`
   }
   
+  setInteraction (interaction) {
+    this.interaction = interaction
+    if (interaction) {
+      this.html.interaction.style.visibility = 'visible'
+    } else {
+      this.html.interaction.style.visibility = 'hidden'
+    }
+  }
+  
   onPointerMove (e) {
     const coords = getEventCoords(e, this.html.canvas)
     this.playerInput.pointerCurrent = coords
@@ -308,7 +319,7 @@ class CNY2021 {
   }
   
   buttonHome_onClick () {
-    
+    this.setInteraction(!this.interaction)
   }
   
   buttonFullscreen_onClick () {
