@@ -63,6 +63,7 @@ table th {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+  position: relative;
 }
 #app > main #canvas {
   flex: 0 0 auto;
@@ -73,6 +74,28 @@ table th {
   cursor: pointer;
   user-select: none;
   touch-action: none;
+}
+#app > main.fullscreen #canvas {
+  max-height: 100vh;
+}
+#app > main #interaction {
+  display: block;
+  overflow: auto;
+  position: absolute;
+  border: 1px solid red;
+  visibility: visible;
+  background: rgba(128, 128, 128, 0.5);
+}
+#app > main #button-home, #app > main #button-fullscreen {
+  position: absolute;
+}
+#app > main #button-home {
+  top: 0.5em;
+  left: 0.5em;
+}
+#app > main #button-fullscreen {
+  top: 0.5em;
+  right: 0.5em;
 }
 
 /*# sourceMappingURL=main.css.map */

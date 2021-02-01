@@ -1,4 +1,4 @@
-import { TILE_SIZE, ROTATIONS, DIRECTIONS, SHAPES, MODES } from './constants'
+import { TILE_SIZE, ROTATIONS, DIRECTIONS, SHAPES, PLAYER_ACTIONS, EXPECTED_TIMESTEP } from './constants'
 
 class Entity {
   constructor (app) {
@@ -30,6 +30,10 @@ class Entity {
   }
   
   play (timeStep) {
+    // Update position
+    const timeCorrection = (timeStep / EXPECTED_TIMESTEP)
+    this.x += this.speedX * timeCorrection
+    this.y += this.speedY * timeCorrection
     
     // Upkeep: deceleration
     const moveDeceleration = this.moveDeceleration * timeStep / 1000 || 0
@@ -39,7 +43,6 @@ class Entity {
 
     this.speedX = newMoveSpeed * Math.cos(curRotation)
     this.speedY = newMoveSpeed * Math.sin(curRotation)
-    
   }
   
   paint () {
@@ -47,11 +50,14 @@ class Entity {
     const camera = this._app.camera
     
     c2d.fillStyle = '#888'
+    if (this.movable && this.solid) {
+      c2d.fillStyle = '#48c'
+    }
     
     // DEBUG: Player colours
-    if ( this === this._app.player) {
+    if (this === this._app.player) {
       c2d.fillStyle = '#c44'
-      if (this._app.mode === MODES.ACTION_PLAYER_INTERACTING) {
+      if (this._app.playerAction === PLAYER_ACTIONS.PULLING) {
         c2d.fillStyle = '#e42'
       }
     }
@@ -108,9 +114,6 @@ class Entity {
         this.speedX = Math.cos(angle) * speed
         this.speedY = Math.sin(angle) * speed
 
-        this.x = collisionCorrection.x
-        this.y = collisionCorrection.y
-        
       } else if (
         this.shape === SHAPES.CIRCLE
         && (target.shape === SHAPES.SQUARE || target.shape === SHAPES.POLYGON)

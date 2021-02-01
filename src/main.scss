@@ -76,7 +76,8 @@ table {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-
+  position: relative;
+  
   #canvas {
     flex: 0 0 auto;
     display: block;
@@ -86,5 +87,32 @@ table {
     cursor: pointer;
     user-select: none;
     touch-action: none;
+  }
+  
+  &.fullscreen #canvas {
+    max-height: 100vh;
+  }
+  
+  #interaction {
+    display: block;
+    overflow: auto;
+    position: absolute;
+    border: 1px solid red;
+    visibility: visible;
+    background: rgba(128, 128, 128, 0.5);
+  }
+  
+  #button-home, #button-fullscreen {
+    position: absolute;
+  }
+  
+  #button-home {
+    top: 0.5em;
+    left: 0.5em;
+  }
+  
+  #button-fullscreen {
+    top: 0.5em;
+    right: 0.5em;
   }
 }

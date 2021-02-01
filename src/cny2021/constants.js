@@ -28,11 +28,9 @@ export const DIRECTIONS = {
   NORTH: 3,
 }
 
-export const MODES = {
-  INITIALISING: 'initialising',
-  ACTION_IDLE: 'action-idle',  // Action mode; nothing is happening
-  ACTION_PLAYER_INTERACTING: 'action-player-interacting',  // Action mode; player is actively interacting
-  ACTION_MOVEMENT: 'action-movement',  // Action mode; movement is happening as a result of player interaction
+export const PLAYER_ACTIONS = {
+  IDLE: 'idle',  // Player isn't doing anything
+  PULLING: 'pulling',  // Player is actively interacting with the canvas, pulling the 'ball' to be launched.
 }
 
 /*
