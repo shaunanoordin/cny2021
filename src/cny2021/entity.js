@@ -1,4 +1,4 @@
-import { TILE_SIZE, ROTATIONS, DIRECTIONS, SHAPES, PLAYER_ACTIONS } from './constants'
+import { TILE_SIZE, ROTATIONS, DIRECTIONS, SHAPES, PLAYER_ACTIONS, EXPECTED_TIMESTEP } from './constants'
 
 class Entity {
   constructor (app) {
@@ -30,6 +30,10 @@ class Entity {
   }
   
   play (timeStep) {
+    // Update position
+    const timeCorrection = (timeStep / EXPECTED_TIMESTEP)
+    this.x += this.speedX * timeCorrection
+    this.y += this.speedY * timeCorrection
     
     // Upkeep: deceleration
     const moveDeceleration = this.moveDeceleration * timeStep / 1000 || 0
@@ -39,7 +43,6 @@ class Entity {
 
     this.speedX = newMoveSpeed * Math.cos(curRotation)
     this.speedY = newMoveSpeed * Math.sin(curRotation)
-    
   }
   
   paint () {

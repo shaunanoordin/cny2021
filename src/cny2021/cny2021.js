@@ -1,7 +1,6 @@
 import {
   GRID_WIDTH, GRID_HEIGHT, TILE_SIZE,
   PLAYER_ACTIONS, SHAPES,
-  EXPECTED_TIMESTEP,
   ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY,
 } from './constants'
 import Entity from './entity'
@@ -80,7 +79,7 @@ class CNY2021 {
   /*
   Section: General Logic
   ----------------------------------------------------------------------------
-  */
+   */
   
   main (time) {
     const timeStep = (this.prevTime) ? time - this.prevTime : time
@@ -99,7 +98,7 @@ class CNY2021 {
   play (timeStep) {
     if (!this.interactionUI) {
       this.entities.forEach(entity => entity.play(timeStep))
-      this.processPhysics(timeStep)
+      this.checkCollisions(timeStep)
     }
   }
   
@@ -163,34 +162,10 @@ class CNY2021 {
     }
   }
   
-  processPhysics (timeStep) {
-    const timeCorrection = (timeStep / EXPECTED_TIMESTEP)
-    
-    // Move Actors and Particles
-    this.entities.forEach(entity => {
-      entity.x += entity.speedX * timeCorrection
-      entity.y += entity.speedY * timeCorrection
-    })
-    
-    for (let a = 0 ; a < this.entities.length ; a++) {
-      let entityA = this.entities[a]
-      
-      for (let b = a + 1 ; b < this.entities.length ; b++) {
-        let entityB = this.entities[b]
-        let collisionCorrection = Physics.checkCollision(entityA, entityB)
-        
-        if (collisionCorrection) {
-          entityA.onCollision(entityB, collisionCorrection.a)
-          entityB.onCollision(entityA, collisionCorrection.b)
-        }
-      }
-    }  
-  }
-  
   /*
   Section: UI and Event Handling
   ----------------------------------------------------------------------------
-  */
+   */
   
   initialiseUI () {
     this.html.canvas.width = this.canvasWidth
@@ -300,7 +275,7 @@ class CNY2021 {
   /*
   Section: Gameplay
   ----------------------------------------------------------------------------
-  */
+   */
   
   resetLevel () {
     this.player = undefined
@@ -396,6 +371,27 @@ class CNY2021 {
     
     this.player.speedX = Math.cos(rotation) * movementSpeed
     this.player.speedY = Math.sin(rotation) * movementSpeed
+  }
+    
+  /*
+  Section: Misc
+  ----------------------------------------------------------------------------
+   */
+  
+  checkCollisions (timeStep) {
+    for (let a = 0 ; a < this.entities.length ; a++) {
+      let entityA = this.entities[a]
+      
+      for (let b = a + 1 ; b < this.entities.length ; b++) {
+        let entityB = this.entities[b]
+        let collisionCorrection = Physics.checkCollision(entityA, entityB)
+        
+        if (collisionCorrection) {
+          entityA.onCollision(entityB, collisionCorrection.a)
+          entityB.onCollision(entityA, collisionCorrection.b)
+        }
+      }
+    }  
   }
 }
 
