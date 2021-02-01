@@ -77,81 +77,8 @@ class CNY2021 {
     }
   }
   
-  resetLevel () {
-    this.player = undefined
-    this.entities = []
-    this.camera = {
-      target: null, x: 0, y: 0,
-    }
-    this.playerAction = PLAYER_ACTIONS.IDLE
-  }
-  
-  loadLevel (level = 0) {
-    this.resetLevel()
-    
-    this.player = new Entity(this)
-    this.player.x = TILE_SIZE * GRID_WIDTH / 2
-    this.player.y = TILE_SIZE * GRID_HEIGHT / 2
-    this.entities.push(this.player)
-    this.camera.target = this.player
-    
-    let testEntity, testAngle, testDistance
-    
-    testEntity = new Entity(this)
-    testAngle = Math.random() * 2 * Math.PI
-    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
-    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
-    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
-    this.entities.push(testEntity)
-    
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.SQUARE
-    testAngle = Math.random() * 2 * Math.PI
-    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
-    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
-    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
-    this.entities.push(testEntity)
-    
-    // West wall
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = -TILE_SIZE
-    testEntity.y = 0
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
-    testEntity.movable = false
-    this.entities.push(testEntity)
-    
-    // East wall
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = TILE_SIZE * GRID_WIDTH
-    testEntity.y = 0
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
-    testEntity.movable = false
-    this.entities.push(testEntity)
-    
-    // North wall
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = 0
-    testEntity.y = -TILE_SIZE
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
-    testEntity.movable = false
-    this.entities.push(testEntity)
-    
-    // South
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = 0
-    testEntity.y = TILE_SIZE * GRID_HEIGHT
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
-    testEntity.movable = false
-    this.entities.push(testEntity)
-
-  }
-  
   /*
-  Main logic
+  Section: General Logic
   ----------------------------------------------------------------------------
   */
   
@@ -236,8 +163,32 @@ class CNY2021 {
     }
   }
   
+  processPhysics (timeStep) {
+    const timeCorrection = (timeStep / EXPECTED_TIMESTEP)
+    
+    // Move Actors and Particles
+    this.entities.forEach(entity => {
+      entity.x += entity.speedX * timeCorrection
+      entity.y += entity.speedY * timeCorrection
+    })
+    
+    for (let a = 0 ; a < this.entities.length ; a++) {
+      let entityA = this.entities[a]
+      
+      for (let b = a + 1 ; b < this.entities.length ; b++) {
+        let entityB = this.entities[b]
+        let collisionCorrection = Physics.checkCollision(entityA, entityB)
+        
+        if (collisionCorrection) {
+          entityA.onCollision(entityB, collisionCorrection.a)
+          entityB.onCollision(entityA, collisionCorrection.b)
+        }
+      }
+    }  
+  }
+  
   /*
-  UI and event handling
+  Section: UI and Event Handling
   ----------------------------------------------------------------------------
   */
   
@@ -346,6 +297,83 @@ class CNY2021 {
     this.updateUI()
   }
   
+  /*
+  Section: Gameplay
+  ----------------------------------------------------------------------------
+  */
+  
+  resetLevel () {
+    this.player = undefined
+    this.entities = []
+    this.camera = {
+      target: null, x: 0, y: 0,
+    }
+    this.playerAction = PLAYER_ACTIONS.IDLE
+  }
+  
+  loadLevel (level = 0) {
+    this.resetLevel()
+    
+    this.player = new Entity(this)
+    this.player.x = TILE_SIZE * GRID_WIDTH / 2
+    this.player.y = TILE_SIZE * GRID_HEIGHT / 2
+    this.entities.push(this.player)
+    this.camera.target = this.player
+    
+    let testEntity, testAngle, testDistance
+    
+    testEntity = new Entity(this)
+    testAngle = Math.random() * 2 * Math.PI
+    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
+    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
+    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
+    this.entities.push(testEntity)
+    
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.SQUARE
+    testAngle = Math.random() * 2 * Math.PI
+    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
+    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
+    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
+    this.entities.push(testEntity)
+    
+    // West wall
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = -TILE_SIZE
+    testEntity.y = 0
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+    
+    // East wall
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = TILE_SIZE * GRID_WIDTH
+    testEntity.y = 0
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+    
+    // North wall
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = 0
+    testEntity.y = -TILE_SIZE
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+    
+    // South
+    testEntity = new Entity(this)
+    testEntity.shape = SHAPES.POLYGON
+    testEntity.x = 0
+    testEntity.y = TILE_SIZE * GRID_HEIGHT
+    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
+    testEntity.movable = false
+    this.entities.push(testEntity)
+  }
+  
   shoot () {
     if (!this.player || !this.playerInput.pointerCurrent) return
     
@@ -368,34 +396,6 @@ class CNY2021 {
     
     this.player.speedX = Math.cos(rotation) * movementSpeed
     this.player.speedY = Math.sin(rotation) * movementSpeed
-  }
-  
-  processPhysics (timeStep) {
-    const timeCorrection = (timeStep / EXPECTED_TIMESTEP)
-    
-    // Move Actors and Particles
-    this.entities.forEach(entity => {
-      entity.x += entity.speedX * timeCorrection
-      entity.y += entity.speedY * timeCorrection
-    })
-    
-    for (let a = 0 ; a < this.entities.length ; a++) {
-      let entityA = this.entities[a]
-      
-      for (let b = a + 1 ; b < this.entities.length ; b++) {
-        let entityB = this.entities[b]
-        let collisionCorrection = Physics.checkCollision(entityA, entityB)
-        
-        if (collisionCorrection) {
-          /*entityA.x = collisionCorrection.a.x
-          entityA.y = collisionCorrection.a.y
-          entityB.x = collisionCorrection.b.x
-          entityB.y = collisionCorrection.b.y*/
-          entityA.onCollision(entityB, collisionCorrection.a)
-          entityB.onCollision(entityA, collisionCorrection.b)
-        }
-      }
-    }  
   }
 }
 
