@@ -3,8 +3,10 @@ import {
   PLAYER_ACTIONS, SHAPES,
   ACCEPTABLE_INPUT_DISTANCE_FROM_HERO,
 } from './constants'
-import Entity from './entity'
 import Physics from './physics'
+
+import Entity from './entity'
+import Hero from './entities/hero'
 
 class CNY2021 {
   constructor () {
@@ -289,7 +291,7 @@ class CNY2021 {
   loadLevel (level = 0) {
     this.resetLevel()
     
-    this.hero = new Entity(this)
+    this.hero = new Hero(this)
     this.hero.x = TILE_SIZE * GRID_WIDTH / 2
     this.hero.y = TILE_SIZE * GRID_HEIGHT / 2
     this.entities.push(this.hero)
@@ -368,6 +370,7 @@ class CNY2021 {
     )
     
     console.log('MOVEMENT SPEED: ', movementSpeed)
+    console.log(`STARTING COORDS: ${this.hero.x}, ${this.hero.y}`)
     
     this.hero.speedX = Math.cos(rotation) * movementSpeed
     this.hero.speedY = Math.sin(rotation) * movementSpeed

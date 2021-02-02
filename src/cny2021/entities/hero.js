@@ -1,9 +1,19 @@
-import { TILE_SIZE, ROTATIONS, DIRECTIONS, SHAPES, PLAYER_ACTIONS, EXPECTED_TIMESTEP } from './constants'
 import Entity from '../entity'
+import { PLAYER_ACTIONS } from '../constants'
 
 class Hero extends Entity {
   constructor (app) {
     super(app)
+    
+    this.colour = '#c44'
   }
+  
+  paint () {
+    this.colour = (this._app.playerAction === PLAYER_ACTIONS.PULLING)
+      ? '#c44'
+      : '#e42'
+    super.paint()
+  }
+}
   
 export default Hero

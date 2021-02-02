@@ -27,6 +27,8 @@ class Entity {
     // this.moveAcceleration = 0.5
     this.moveDeceleration = 0.5
     this.moveMaxSpeed = 8
+    
+    this.colour = '#ccc'
   }
   
   play (timeStep) {
@@ -46,9 +48,7 @@ class Entity {
   }
   
   paint () {
-    const c2d = this._app.canvas2d
-    const camera = this._app.camera
-    
+    /*
     c2d.fillStyle = '#888'
     if (this.movable && this.solid) {
       c2d.fillStyle = '#48c'
@@ -60,21 +60,34 @@ class Entity {
       if (this._app.playerAction === PLAYER_ACTIONS.PULLING) {
         c2d.fillStyle = '#e42'
       }
-    }
+    }*/
     
-    // DEBUG: shape outline
+    this.paint_outline()
+  }
+  
+  paint_outline () {
+    const c2d = this._app.canvas2d
+    const camera = this._app.camera
+    
+    c2d.fillStyle = this.colour
+    c2d.strokeStyle = '#000'
+    c2d.lineWidth = this.mass
+    
+    // Draw shape outline
     switch (this.shape) {
     case SHAPES.CIRCLE:
       c2d.beginPath()
       c2d.arc(this.x + camera.x, this.y + camera.y, this.size / 2, 0, 2 * Math.PI)
-      c2d.fill()
       c2d.closePath()
+      c2d.fill()
+      this.solid && c2d.stroke()
       break
     case SHAPES.SQUARE:
       c2d.beginPath()
       c2d.rect(this.x + camera.x - this.size / 2, this.y + camera.y - this.size / 2, this.size, this.size)
-      c2d.fill()
       c2d.closePath()
+      c2d.fill()
+      this.solid && c2d.stroke()
       break
     case SHAPES.POLYGON:
       c2d.beginPath()
@@ -82,12 +95,14 @@ class Entity {
       if (coords.length >= 1) c2d.moveTo(coords[coords.length-1].x + camera.x, coords[coords.length-1].y + camera.y)
       for (let i = 0 ; i < coords.length ; i++) {
         c2d.lineTo(coords[i].x + camera.x, coords[i].y + camera.y)
-      }            
-      c2d.fill()
+      }
       c2d.closePath()
+      c2d.fill()
+      this.solid && c2d.stroke()
       break
     }
     
+    // Draw anchor point, mostly for debugging
     c2d.fillStyle = '#000'
     c2d.beginPath()
     c2d.arc(this.x + camera.x, this.y + camera.y, 2, 0, 2 * Math.PI)
