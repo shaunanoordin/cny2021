@@ -27,7 +27,7 @@ class Entity {
     
     // this.moveAcceleration = 0.5
     this.moveDeceleration = 0.5
-    this.moveMaxSpeed = 8
+    this.moveMaxSpeed = 16
     
     this.colour = '#ccc'
   }

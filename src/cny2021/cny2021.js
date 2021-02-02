@@ -138,6 +138,15 @@ class CNY2021 {
         c2d.beginPath()
         c2d.rect(x, y, TILE_SIZE, TILE_SIZE)
         c2d.stroke()
+        
+        // Debug
+        c2d.fillStyle = '#ccc'
+        c2d.font = `1em Source Code Pro`
+        c2d.textAlign = 'center'
+        c2d.textBaseline = 'middle'
+        const col = Math.floor((x - this.camera.x) / TILE_SIZE)
+        const row = Math.floor((y - this.camera.y) / TILE_SIZE)
+        c2d.fillText(`${col},${row}`, x + TILE_SIZE / 2, y + TILE_SIZE / 2)
       }
     }
     
