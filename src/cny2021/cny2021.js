@@ -2,6 +2,7 @@ import {
   APP_WIDTH, APP_HEIGHT, TILE_SIZE,
   PLAYER_ACTIONS, SHAPES,
   ACCEPTABLE_INPUT_DISTANCE_FROM_HERO,
+  VICTORY_TIMER,
 } from './constants'
 import Physics from './physics'
 
@@ -49,6 +50,9 @@ class CNY2021 {
       pointerCurrent: undefined,
       pointerEnd: undefined,
     }
+    
+    this.victory = false
+    this.victoryCountdown = 0
 
     this.prevTime = null
     this.nextFrame = window.requestAnimationFrame(this.main.bind(this))
@@ -104,6 +108,10 @@ class CNY2021 {
       this.entities.forEach(entity => entity.play(timeStep))
       this.checkCollisions(timeStep)
     }
+    
+    if (this.victoryCountdown > 0) {
+      this.victoryCountdown = Math.max(0, this.victoryCountdown - timeStep)
+    }
   }
   
   paint () {
@@ -132,14 +140,6 @@ class CNY2021 {
         c2d.stroke()
       }
     }
-    
-    /*for (let row = 0 ; row < GRID_HEIGHT ; row ++) {
-      for (let col = 0 ; col < GRID_WIDTH ; col ++) {
-        c2d.beginPath()
-        c2d.rect(col * TILE_SIZE + camera.x, row * TILE_SIZE + camera.y, TILE_SIZE, TILE_SIZE)
-        c2d.stroke()
-      }
-    }*/
     
     // Draw entities
     this.entities.forEach(entity => entity.paint())
@@ -174,6 +174,20 @@ class CNY2021 {
       c2d.moveTo(this.hero.x + camera.x, this.hero.y + camera.y)
       c2d.lineTo(arrowCoords.x + camera.x, arrowCoords.y + camera.y)
       c2d.stroke()
+    }
+    
+    // Draw victory
+    if (this.victory) {
+      const fontSize = Math.floor((this.victoryCountdown / VICTORY_TIMER) * 50 + 10)
+      
+      c2d.fillStyle = '#fff'
+      c2d.strokeStyle = '#000'
+      c2d.lineWidth = 2
+      c2d.font = `${fontSize}em Source Code Pro`
+      c2d.textAlign = 'center'
+      c2d.textBaseline = 'middle'
+      c2d.fillText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2)
+      c2d.strokeText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2)
     }
   }
   
@@ -299,6 +313,8 @@ class CNY2021 {
       target: null, x: 0, y: 0,
     }
     this.playerAction = PLAYER_ACTIONS.IDLE
+    this.victory = 0
+    this.victoryCountdown = 0
   }
   
   loadLevel (level = 0) {
