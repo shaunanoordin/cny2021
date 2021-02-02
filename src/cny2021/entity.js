@@ -103,7 +103,7 @@ class Entity {
     }
     
     // Draw anchor point, mostly for debugging
-    c2d.fillStyle = '#000'
+    c2d.fillStyle = 'rgba(255, 255, 255, 0.5)'
     c2d.beginPath()
     c2d.arc(this.x + camera.x, this.y + camera.y, 2, 0, 2 * Math.PI)
     c2d.fill()

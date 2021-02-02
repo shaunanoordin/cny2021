@@ -291,9 +291,7 @@ class CNY2021 {
   loadLevel (level = 0) {
     this.resetLevel()
     
-    this.hero = new Hero(this)
-    this.hero.x = TILE_SIZE * GRID_WIDTH / 2
-    this.hero.y = TILE_SIZE * GRID_HEIGHT / 2
+    this.hero = new Hero(this, GRID_WIDTH / 2 - 0.5, GRID_HEIGHT / 2 - 0.5)
     this.entities.push(this.hero)
     this.camera.target = this.hero
     
