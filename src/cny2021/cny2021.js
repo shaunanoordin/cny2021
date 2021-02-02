@@ -1,7 +1,7 @@
 import {
   GRID_WIDTH, GRID_HEIGHT, TILE_SIZE,
   PLAYER_ACTIONS, SHAPES,
-  ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY,
+  ACCEPTABLE_INPUT_DISTANCE_FROM_HERO,
 } from './constants'
 import Entity from './entity'
 import Physics from './physics'
@@ -36,7 +36,7 @@ class CNY2021 {
       // ...
     }
     
-    this.player = null
+    this.hero = null
     this.entities = []
     
     this.playerAction = PLAYER_ACTIONS.IDLE
@@ -131,7 +131,7 @@ class CNY2021 {
     
     // Draw player input
     if (this.playerAction === PLAYER_ACTIONS.PULLING
-        && this.player
+        && this.hero
         && this.playerInput.pointerCurrent
        ) {
       
@@ -141,22 +141,22 @@ class CNY2021 {
       c2d.lineWidth = TILE_SIZE / 8
       
       c2d.beginPath()
-      c2d.moveTo(this.player.x + camera.x, this.player.y + camera.y)
+      c2d.moveTo(this.hero.x + camera.x, this.hero.y + camera.y)
       c2d.lineTo(inputCoords.x, inputCoords.y)
       c2d.stroke()
       c2d.beginPath()
-      c2d.arc(inputCoords.x, inputCoords.y, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY, 0, 2 * Math.PI)
+      c2d.arc(inputCoords.x, inputCoords.y, ACCEPTABLE_INPUT_DISTANCE_FROM_HERO, 0, 2 * Math.PI)
       c2d.stroke()
       
       const arrowCoords = {
-        x: this.player.x - (inputCoords.x - this.player.x) + camera.x,
-        y: this.player.y - (inputCoords.y - this.player.y) + camera.y,
+        x: this.hero.x - (inputCoords.x - this.hero.x) + camera.x,
+        y: this.hero.y - (inputCoords.y - this.hero.y) + camera.y,
       }
       c2d.strokeStyle = '#e42'
       c2d.lineWidth = TILE_SIZE / 8
       
       c2d.beginPath()
-      c2d.moveTo(this.player.x + camera.x, this.player.y + camera.y)
+      c2d.moveTo(this.hero.x + camera.x, this.hero.y + camera.y)
       c2d.lineTo(arrowCoords.x + camera.x, arrowCoords.y + camera.y)
       c2d.stroke()
     }
@@ -215,13 +215,13 @@ class CNY2021 {
     this.playerInput.pointerCurrent = undefined
     this.playerInput.pointerEnd = undefined
     
-    if (this.player) {
-      const distX = this.player.x - coords.x + camera.x
-      const distY = this.player.y - coords.y + camera.y
-      const distFromPlayer = Math.sqrt(distX * distX + distY + distY)
+    if (this.hero) {
+      const distX = this.hero.x - coords.x + camera.x
+      const distY = this.hero.y - coords.y + camera.y
+      const distFromHero = Math.sqrt(distX * distX + distY + distY)
       const rotation = Math.atan2(distY, distX)
       
-      if (distFromPlayer < ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY) {
+      if (distFromHero < ACCEPTABLE_INPUT_DISTANCE_FROM_HERO) {
         this.playerAction = PLAYER_ACTIONS.PULLING
         this.playerInput.pointerStart = coords
         this.playerInput.pointerCurrent = coords
@@ -278,7 +278,7 @@ class CNY2021 {
    */
   
   resetLevel () {
-    this.player = undefined
+    this.hero = undefined
     this.entities = []
     this.camera = {
       target: null, x: 0, y: 0,
@@ -289,27 +289,27 @@ class CNY2021 {
   loadLevel (level = 0) {
     this.resetLevel()
     
-    this.player = new Entity(this)
-    this.player.x = TILE_SIZE * GRID_WIDTH / 2
-    this.player.y = TILE_SIZE * GRID_HEIGHT / 2
-    this.entities.push(this.player)
-    this.camera.target = this.player
+    this.hero = new Entity(this)
+    this.hero.x = TILE_SIZE * GRID_WIDTH / 2
+    this.hero.y = TILE_SIZE * GRID_HEIGHT / 2
+    this.entities.push(this.hero)
+    this.camera.target = this.hero
     
     let testEntity, testAngle, testDistance
     
     testEntity = new Entity(this)
     testAngle = Math.random() * 2 * Math.PI
     testDistance = (Math.random() * 2 + 2) * TILE_SIZE
-    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
-    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
+    testEntity.x = Math.cos(testAngle) * testDistance + this.hero.x
+    testEntity.y = Math.sin(testAngle) * testDistance + this.hero.y
     this.entities.push(testEntity)
     
     testEntity = new Entity(this)
     testEntity.shape = SHAPES.SQUARE
     testAngle = Math.random() * 2 * Math.PI
     testDistance = (Math.random() * 2 + 2) * TILE_SIZE
-    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
-    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
+    testEntity.x = Math.cos(testAngle) * testDistance + this.hero.x
+    testEntity.y = Math.sin(testAngle) * testDistance + this.hero.y
     this.entities.push(testEntity)
     
     // West wall
@@ -350,27 +350,27 @@ class CNY2021 {
   }
   
   shoot () {
-    if (!this.player || !this.playerInput.pointerCurrent) return
+    if (!this.hero || !this.playerInput.pointerCurrent) return
     
     const camera = this.camera
     
     const inputCoords = this.playerInput.pointerCurrent
-    const directionX = this.player.x - inputCoords.x + camera.x
-    const directionY = this.player.y - inputCoords.y + camera.y
+    const directionX = this.hero.x - inputCoords.x + camera.x
+    const directionY = this.hero.y - inputCoords.y + camera.y
     const dist = Math.sqrt(directionX * directionX + directionY * directionY)
     const rotation = Math.atan2(directionY, directionX)
 
     const MAX_PULL_DISTANCE = TILE_SIZE * 4
-    const intendedMovement = dist / MAX_PULL_DISTANCE * this.player.moveMaxSpeed
+    const intendedMovement = dist / MAX_PULL_DISTANCE * this.hero.moveMaxSpeed
     const movementSpeed = Math.min(
       intendedMovement,
-      this.player.moveMaxSpeed
+      this.hero.moveMaxSpeed
     )
     
     console.log('MOVEMENT SPEED: ', movementSpeed)
     
-    this.player.speedX = Math.cos(rotation) * movementSpeed
-    this.player.speedY = Math.sin(rotation) * movementSpeed
+    this.hero.speedX = Math.cos(rotation) * movementSpeed
+    this.hero.speedY = Math.sin(rotation) * movementSpeed
   }
     
   /*
