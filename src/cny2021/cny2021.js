@@ -7,6 +7,7 @@ import Physics from './physics'
 
 import Entity from './entity'
 import Hero from './entities/hero'
+import Goal from './entities/goal'
 
 class CNY2021 {
   constructor () {
@@ -295,6 +296,9 @@ class CNY2021 {
     this.entities.push(this.hero)
     this.camera.target = this.hero
     
+    const goal = new Goal(this, 1, 1)
+    this.entities.push(goal)
+    
     let testEntity, testAngle, testDistance
     
     testEntity = new Entity(this)
@@ -347,6 +351,9 @@ class CNY2021 {
     testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
     testEntity.movable = false
     this.entities.push(testEntity)
+    
+    // Rearrange: 
+    this.entities.sort((a, b) => a.z - b.z)
   }
   
   shoot () {

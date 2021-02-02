@@ -6,8 +6,9 @@ class Hero extends Entity {
     super(app)
     
     this.colour = '#c44'
-    this.x = col * TILE_SIZE + this.size / 2
-    this.y = row * TILE_SIZE + this.size / 2
+    this.x = col * TILE_SIZE + TILE_SIZE / 2
+    this.y = row * TILE_SIZE + TILE_SIZE / 2
+    this.z = 100
   }
   
   paint () {

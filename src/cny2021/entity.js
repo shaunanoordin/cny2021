@@ -9,6 +9,7 @@ class Entity {
     
     this.x = 0
     this.y = 0
+    this.z = 0  // Only relevant to paint(), not to physics
     this.size = TILE_SIZE
     this._rotation = ROTATIONS.SOUTH  // Rotation in radians
     
@@ -110,8 +111,6 @@ class Entity {
   }
   
   onCollision (target, collisionCorrection) {
-    console.log('BONK')
-    
     // when two solid shapes collide, bounce!
     if (
       this.movable && this.solid
