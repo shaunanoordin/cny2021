@@ -1,5 +1,5 @@
 import {
-  GRID_WIDTH, GRID_HEIGHT, TILE_SIZE,
+  APP_WIDTH, APP_HEIGHT, TILE_SIZE,
   PLAYER_ACTIONS, SHAPES,
   ACCEPTABLE_INPUT_DISTANCE_FROM_HERO,
 } from './constants'
@@ -24,8 +24,8 @@ class CNY2021 {
     this.setInteractionUI(false)
     
     this.canvas2d = this.html.canvas.getContext('2d')
-    this.canvasWidth = TILE_SIZE * GRID_WIDTH
-    this.canvasHeight = TILE_SIZE * GRID_HEIGHT
+    this.canvasWidth = APP_WIDTH
+    this.canvasHeight = APP_HEIGHT
     
     this.camera = {
       target: null,  // Target entity to follow. If null, camera is static.
@@ -118,17 +118,28 @@ class CNY2021 {
     
     c2d.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
     
-    c2d.strokeStyle = 'rgba(128, 128, 128, 0.5)'
-    c2d.lineWidth = 1
+    c2d.strokeStyle = 'rgba(128, 128, 128, 0.05)'
+    c2d.lineWidth = 2
+    
+    const offsetX = (this.camera.x % TILE_SIZE) - TILE_SIZE
+    const offsetY = (this.camera.y % TILE_SIZE) - TILE_SIZE
     
     // Draw grid
-    for (let row = 0 ; row < GRID_HEIGHT ; row ++) {
+    for (let y = offsetY ; y < APP_HEIGHT ; y += TILE_SIZE) {
+      for (let x = offsetX ; x < APP_WIDTH ; x += TILE_SIZE) {
+        c2d.beginPath()
+        c2d.rect(x, y, TILE_SIZE, TILE_SIZE)
+        c2d.stroke()
+      }
+    }
+    
+    /*for (let row = 0 ; row < GRID_HEIGHT ; row ++) {
       for (let col = 0 ; col < GRID_WIDTH ; col ++) {
         c2d.beginPath()
         c2d.rect(col * TILE_SIZE + camera.x, row * TILE_SIZE + camera.y, TILE_SIZE, TILE_SIZE)
         c2d.stroke()
       }
-    }
+    }*/
     
     // Draw entities
     this.entities.forEach(entity => entity.paint())

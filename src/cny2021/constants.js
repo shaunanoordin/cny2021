@@ -1,6 +1,6 @@
 export const TILE_SIZE = 64
-export const GRID_WIDTH = 24
-export const GRID_HEIGHT = 16
+export const APP_WIDTH = 24 * TILE_SIZE
+export const APP_HEIGHT = 16 * TILE_SIZE
 export const ACCEPTABLE_INPUT_DISTANCE_FROM_HERO = TILE_SIZE
 
 export const SHAPES = {
