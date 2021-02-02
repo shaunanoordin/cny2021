@@ -1,7 +1,7 @@
 export const TILE_SIZE = 64
-export const GRID_WIDTH = 24
-export const GRID_HEIGHT = 16
-export const ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY = TILE_SIZE
+export const APP_WIDTH = 24 * TILE_SIZE
+export const APP_HEIGHT = 16 * TILE_SIZE
+export const ACCEPTABLE_INPUT_DISTANCE_FROM_HERO = TILE_SIZE
 
 export const SHAPES = {
   NONE: 'none',
@@ -41,3 +41,6 @@ e.g. we can say that we expect an object with "movement speed" of "2" to travel
  */
 export const EXPECTED_FRAMES_PER_SECOND = 60
 export const EXPECTED_TIMESTEP = 1000 / EXPECTED_FRAMES_PER_SECOND
+
+// Time it takes to play victory animation
+export const VICTORY_TIMER = 500  // milliseconds

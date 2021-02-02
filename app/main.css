@@ -52,10 +52,18 @@ table th {
   background: #c44;
   color: #eee;
 }
-#app > header h1,
-#app > footer h1 {
+
+#app > header h1 {
   margin: 0;
   padding: 0;
+}
+
+#app > footer {
+  text-align: right;
+}
+#app > footer a {
+  color: #fff;
+  text-decoration: underline;
 }
 
 #app > main {

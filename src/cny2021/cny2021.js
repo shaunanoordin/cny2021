@@ -1,10 +1,16 @@
 import {
-  GRID_WIDTH, GRID_HEIGHT, TILE_SIZE,
+  APP_WIDTH, APP_HEIGHT, TILE_SIZE,
   PLAYER_ACTIONS, SHAPES,
-  ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY,
+  ACCEPTABLE_INPUT_DISTANCE_FROM_HERO,
+  VICTORY_TIMER,
 } from './constants'
-import Entity from './entity'
 import Physics from './physics'
+
+import Entity from './entity'
+import Hero from './entities/hero'
+import Goal from './entities/goal'
+import Wall from './entities/wall'
+import Ball from './entities/ball'
 
 class CNY2021 {
   constructor () {
@@ -20,8 +26,8 @@ class CNY2021 {
     this.setInteractionUI(false)
     
     this.canvas2d = this.html.canvas.getContext('2d')
-    this.canvasWidth = TILE_SIZE * GRID_WIDTH
-    this.canvasHeight = TILE_SIZE * GRID_HEIGHT
+    this.canvasWidth = APP_WIDTH
+    this.canvasHeight = APP_HEIGHT
     
     this.camera = {
       target: null,  // Target entity to follow. If null, camera is static.
@@ -36,7 +42,7 @@ class CNY2021 {
       // ...
     }
     
-    this.player = null
+    this.hero = null
     this.entities = []
     
     this.playerAction = PLAYER_ACTIONS.IDLE
@@ -45,6 +51,9 @@ class CNY2021 {
       pointerCurrent: undefined,
       pointerEnd: undefined,
     }
+    
+    this.victory = false
+    this.victoryCountdown = 0
 
     this.prevTime = null
     this.nextFrame = window.requestAnimationFrame(this.main.bind(this))
@@ -100,6 +109,10 @@ class CNY2021 {
       this.entities.forEach(entity => entity.play(timeStep))
       this.checkCollisions(timeStep)
     }
+    
+    if (this.victoryCountdown > 0) {
+      this.victoryCountdown = Math.max(0, this.victoryCountdown - timeStep)
+    }
   }
   
   paint () {
@@ -114,15 +127,29 @@ class CNY2021 {
     
     c2d.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
     
-    c2d.strokeStyle = 'rgba(128, 128, 128, 0.5)'
-    c2d.lineWidth = 1
+    c2d.strokeStyle = 'rgba(128, 128, 128, 0.05)'
+    c2d.lineWidth = 2
+    
+    const offsetX = (this.camera.x % TILE_SIZE) - TILE_SIZE
+    const offsetY = (this.camera.y % TILE_SIZE) - TILE_SIZE
     
     // Draw grid
-    for (let row = 0 ; row < GRID_HEIGHT ; row ++) {
-      for (let col = 0 ; col < GRID_WIDTH ; col ++) {
+    for (let y = offsetY ; y < APP_HEIGHT ; y += TILE_SIZE) {
+      for (let x = offsetX ; x < APP_WIDTH ; x += TILE_SIZE) {
         c2d.beginPath()
-        c2d.rect(col * TILE_SIZE + camera.x, row * TILE_SIZE + camera.y, TILE_SIZE, TILE_SIZE)
+        c2d.rect(x, y, TILE_SIZE, TILE_SIZE)
         c2d.stroke()
+        
+        // Debug Grid
+        /*
+        c2d.fillStyle = '#ccc'
+        c2d.font = `1em Source Code Pro`
+        c2d.textAlign = 'center'
+        c2d.textBaseline = 'middle'
+        const col = Math.floor((x - this.camera.x) / TILE_SIZE)
+        const row = Math.floor((y - this.camera.y) / TILE_SIZE)
+        c2d.fillText(`${col},${row}`, x + TILE_SIZE / 2, y + TILE_SIZE / 2)
+        */
       }
     }
     
@@ -131,7 +158,7 @@ class CNY2021 {
     
     // Draw player input
     if (this.playerAction === PLAYER_ACTIONS.PULLING
-        && this.player
+        && this.hero
         && this.playerInput.pointerCurrent
        ) {
       
@@ -141,24 +168,38 @@ class CNY2021 {
       c2d.lineWidth = TILE_SIZE / 8
       
       c2d.beginPath()
-      c2d.moveTo(this.player.x + camera.x, this.player.y + camera.y)
+      c2d.moveTo(this.hero.x + camera.x, this.hero.y + camera.y)
       c2d.lineTo(inputCoords.x, inputCoords.y)
       c2d.stroke()
       c2d.beginPath()
-      c2d.arc(inputCoords.x, inputCoords.y, ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY, 0, 2 * Math.PI)
+      c2d.arc(inputCoords.x, inputCoords.y, ACCEPTABLE_INPUT_DISTANCE_FROM_HERO, 0, 2 * Math.PI)
       c2d.stroke()
       
       const arrowCoords = {
-        x: this.player.x - (inputCoords.x - this.player.x) + camera.x,
-        y: this.player.y - (inputCoords.y - this.player.y) + camera.y,
+        x: this.hero.x - (inputCoords.x - this.hero.x) + camera.x,
+        y: this.hero.y - (inputCoords.y - this.hero.y) + camera.y,
       }
       c2d.strokeStyle = '#e42'
       c2d.lineWidth = TILE_SIZE / 8
       
       c2d.beginPath()
-      c2d.moveTo(this.player.x + camera.x, this.player.y + camera.y)
+      c2d.moveTo(this.hero.x + camera.x, this.hero.y + camera.y)
       c2d.lineTo(arrowCoords.x + camera.x, arrowCoords.y + camera.y)
       c2d.stroke()
+    }
+    
+    // Draw victory
+    if (this.victory) {
+      const fontSize = Math.floor((this.victoryCountdown / VICTORY_TIMER) * 50 + 10)
+      
+      c2d.fillStyle = '#fff'
+      c2d.strokeStyle = '#000'
+      c2d.lineWidth = 2
+      c2d.font = `${fontSize}em Source Code Pro`
+      c2d.textAlign = 'center'
+      c2d.textBaseline = 'middle'
+      c2d.fillText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2)
+      c2d.strokeText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2)
     }
   }
   
@@ -215,13 +256,13 @@ class CNY2021 {
     this.playerInput.pointerCurrent = undefined
     this.playerInput.pointerEnd = undefined
     
-    if (this.player) {
-      const distX = this.player.x - coords.x + camera.x
-      const distY = this.player.y - coords.y + camera.y
-      const distFromPlayer = Math.sqrt(distX * distX + distY + distY)
+    if (this.hero) {
+      const distX = this.hero.x - coords.x + camera.x
+      const distY = this.hero.y - coords.y + camera.y
+      const distFromHero = Math.sqrt(distX * distX + distY + distY)
       const rotation = Math.atan2(distY, distX)
       
-      if (distFromPlayer < ACCEPTABLE_INPUT_DISTANCE_FROM_PLAYER_ENTITY) {
+      if (distFromHero < ACCEPTABLE_INPUT_DISTANCE_FROM_HERO) {
         this.playerAction = PLAYER_ACTIONS.PULLING
         this.playerInput.pointerStart = coords
         this.playerInput.pointerCurrent = coords
@@ -278,99 +319,61 @@ class CNY2021 {
    */
   
   resetLevel () {
-    this.player = undefined
+    this.hero = undefined
     this.entities = []
     this.camera = {
       target: null, x: 0, y: 0,
     }
     this.playerAction = PLAYER_ACTIONS.IDLE
+    this.victory = 0
+    this.victoryCountdown = 0
   }
   
   loadLevel (level = 0) {
     this.resetLevel()
     
-    this.player = new Entity(this)
-    this.player.x = TILE_SIZE * GRID_WIDTH / 2
-    this.player.y = TILE_SIZE * GRID_HEIGHT / 2
-    this.entities.push(this.player)
-    this.camera.target = this.player
+    this.hero = new Hero(this, 5, 7)
+    this.entities.push(this.hero)
+    this.camera.target = this.hero
     
-    let testEntity, testAngle, testDistance
+    this.entities.push(new Goal(this, 16, 7))
     
-    testEntity = new Entity(this)
-    testAngle = Math.random() * 2 * Math.PI
-    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
-    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
-    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
-    this.entities.push(testEntity)
+    this.entities.push(new Wall(this, 0, 0, 1, 15)) // West Wall
+    this.entities.push(new Wall(this, 26, 0, 1, 15)) // East Wall
+    this.entities.push(new Wall(this, 1, 0, 25, 1)) // North Wall
+    this.entities.push(new Wall(this, 1, 14, 25, 1)) // South Wall
+    this.entities.push(new Wall(this, 10, 4, 1, 7)) // Middle Wall
     
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.SQUARE
-    testAngle = Math.random() * 2 * Math.PI
-    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
-    testEntity.x = Math.cos(testAngle) * testDistance + this.player.x
-    testEntity.y = Math.sin(testAngle) * testDistance + this.player.y
-    this.entities.push(testEntity)
+    this.entities.push(new Ball(this, 10, 2))
+    this.entities.push(new Ball(this, 10, 12))
     
-    // West wall
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = -TILE_SIZE
-    testEntity.y = 0
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
-    testEntity.movable = false
-    this.entities.push(testEntity)
-    
-    // East wall
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = TILE_SIZE * GRID_WIDTH
-    testEntity.y = 0
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
-    testEntity.movable = false
-    this.entities.push(testEntity)
-    
-    // North wall
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = 0
-    testEntity.y = -TILE_SIZE
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
-    testEntity.movable = false
-    this.entities.push(testEntity)
-    
-    // South
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = 0
-    testEntity.y = TILE_SIZE * GRID_HEIGHT
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
-    testEntity.movable = false
-    this.entities.push(testEntity)
+    // Rearrange: 
+    this.entities.sort((a, b) => a.z - b.z)
   }
   
   shoot () {
-    if (!this.player || !this.playerInput.pointerCurrent) return
+    if (!this.hero || !this.playerInput.pointerCurrent) return
     
     const camera = this.camera
     
     const inputCoords = this.playerInput.pointerCurrent
-    const directionX = this.player.x - inputCoords.x + camera.x
-    const directionY = this.player.y - inputCoords.y + camera.y
+    const directionX = this.hero.x - inputCoords.x + camera.x
+    const directionY = this.hero.y - inputCoords.y + camera.y
     const dist = Math.sqrt(directionX * directionX + directionY * directionY)
     const rotation = Math.atan2(directionY, directionX)
 
     const MAX_PULL_DISTANCE = TILE_SIZE * 4
-    const intendedMovement = dist / MAX_PULL_DISTANCE * this.player.moveMaxSpeed
+    const intendedMovement = dist / MAX_PULL_DISTANCE * this.hero.moveMaxSpeed
     const movementSpeed = Math.min(
       intendedMovement,
-      this.player.moveMaxSpeed
+      this.hero.moveMaxSpeed
     )
     
     console.log('MOVEMENT SPEED: ', movementSpeed)
+    console.log(`STARTING COORDS: ${this.hero.x}, ${this.hero.y}`)
     
-    this.player.speedX = Math.cos(rotation) * movementSpeed
-    this.player.speedY = Math.sin(rotation) * movementSpeed
+    this.hero.speedX = Math.cos(rotation) * movementSpeed
+    this.hero.speedY = Math.sin(rotation) * movementSpeed
   }
     
   /*
