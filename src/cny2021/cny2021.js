@@ -8,6 +8,7 @@ import Physics from './physics'
 import Entity from './entity'
 import Hero from './entities/hero'
 import Goal from './entities/goal'
+import Wall from './entities/wall'
 
 class CNY2021 {
   constructor () {
@@ -292,65 +293,16 @@ class CNY2021 {
   loadLevel (level = 0) {
     this.resetLevel()
     
-    this.hero = new Hero(this, GRID_WIDTH / 2 - 0.5, GRID_HEIGHT / 2 - 0.5)
+    this.hero = new Hero(this, 7, 7)
     this.entities.push(this.hero)
     this.camera.target = this.hero
     
-    const goal = new Goal(this, 1, 1)
-    this.entities.push(goal)
+    this.entities.push(new Goal(this, 20, 7))
     
-    let testEntity, testAngle, testDistance
-    
-    testEntity = new Entity(this)
-    testAngle = Math.random() * 2 * Math.PI
-    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
-    testEntity.x = Math.cos(testAngle) * testDistance + this.hero.x
-    testEntity.y = Math.sin(testAngle) * testDistance + this.hero.y
-    this.entities.push(testEntity)
-    
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.SQUARE
-    testAngle = Math.random() * 2 * Math.PI
-    testDistance = (Math.random() * 2 + 2) * TILE_SIZE
-    testEntity.x = Math.cos(testAngle) * testDistance + this.hero.x
-    testEntity.y = Math.sin(testAngle) * testDistance + this.hero.y
-    this.entities.push(testEntity)
-    
-    // West wall
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = -TILE_SIZE
-    testEntity.y = 0
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
-    testEntity.movable = false
-    this.entities.push(testEntity)
-    
-    // East wall
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = TILE_SIZE * GRID_WIDTH
-    testEntity.y = 0
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE * GRID_HEIGHT, 0, TILE_SIZE * GRID_HEIGHT]
-    testEntity.movable = false
-    this.entities.push(testEntity)
-    
-    // North wall
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = 0
-    testEntity.y = -TILE_SIZE
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
-    testEntity.movable = false
-    this.entities.push(testEntity)
-    
-    // South
-    testEntity = new Entity(this)
-    testEntity.shape = SHAPES.POLYGON
-    testEntity.x = 0
-    testEntity.y = TILE_SIZE * GRID_HEIGHT
-    testEntity.shapePolygonPath = [0, 0, TILE_SIZE * GRID_WIDTH, 0, TILE_SIZE * GRID_WIDTH, TILE_SIZE, 0, TILE_SIZE]
-    testEntity.movable = false
-    this.entities.push(testEntity)
+    this.entities.push(new Wall(this, 0, 0, 1, 15)) // West Wall
+    this.entities.push(new Wall(this, 26, 0, 1, 15)) // East Wall
+    this.entities.push(new Wall(this, 1, 0, 25, 1)) // North Wall
+    this.entities.push(new Wall(this, 1, 14, 25, 1)) // South Wall
     
     // Rearrange: 
     this.entities.sort((a, b) => a.z - b.z)
