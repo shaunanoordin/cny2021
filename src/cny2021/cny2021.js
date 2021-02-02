@@ -10,6 +10,7 @@ import Entity from './entity'
 import Hero from './entities/hero'
 import Goal from './entities/goal'
 import Wall from './entities/wall'
+import Ball from './entities/ball'
 
 class CNY2021 {
   constructor () {
@@ -329,16 +330,20 @@ class CNY2021 {
   loadLevel (level = 0) {
     this.resetLevel()
     
-    this.hero = new Hero(this, 7, 7)
+    this.hero = new Hero(this, 5, 7)
     this.entities.push(this.hero)
     this.camera.target = this.hero
     
-    this.entities.push(new Goal(this, 20, 7))
+    this.entities.push(new Goal(this, 16, 7))
     
     this.entities.push(new Wall(this, 0, 0, 1, 15)) // West Wall
     this.entities.push(new Wall(this, 26, 0, 1, 15)) // East Wall
     this.entities.push(new Wall(this, 1, 0, 25, 1)) // North Wall
     this.entities.push(new Wall(this, 1, 14, 25, 1)) // South Wall
+    this.entities.push(new Wall(this, 10, 4, 1, 7)) // Middle Wall
+    
+    this.entities.push(new Ball(this, 10, 2))
+    this.entities.push(new Ball(this, 10, 12))
     
     // Rearrange: 
     this.entities.sort((a, b) => a.z - b.z)
