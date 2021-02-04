@@ -5,12 +5,7 @@ import {
   VICTORY_TIMER,
 } from './constants'
 import Physics from './physics'
-
-import Entity from './entity'
-import Hero from './entities/hero'
-import Goal from './entities/goal'
-import Wall from './entities/wall'
-import Ball from './entities/ball'
+import Levels from './levels'
 
 class CNY2021 {
   constructor () {
@@ -44,6 +39,7 @@ class CNY2021 {
     
     this.hero = null
     this.entities = []
+    this.levels = new Levels(this)
     
     this.playerAction = PLAYER_ACTIONS.IDLE
     this.playerInput = {
@@ -81,7 +77,7 @@ class CNY2021 {
     
     if (allAssetsLoaded) {
       this.initialised = true
-      this.loadLevel(0)
+      this.levels.load(0)
     }
   }
   
@@ -317,39 +313,6 @@ class CNY2021 {
   Section: Gameplay
   ----------------------------------------------------------------------------
    */
-  
-  resetLevel () {
-    this.hero = undefined
-    this.entities = []
-    this.camera = {
-      target: null, x: 0, y: 0,
-    }
-    this.playerAction = PLAYER_ACTIONS.IDLE
-    this.victory = 0
-    this.victoryCountdown = 0
-  }
-  
-  loadLevel (level = 0) {
-    this.resetLevel()
-    
-    this.hero = new Hero(this, 5, 7)
-    this.entities.push(this.hero)
-    this.camera.target = this.hero
-    
-    this.entities.push(new Goal(this, 16, 7))
-    
-    this.entities.push(new Wall(this, 0, 0, 1, 15)) // West Wall
-    this.entities.push(new Wall(this, 26, 0, 1, 15)) // East Wall
-    this.entities.push(new Wall(this, 1, 0, 25, 1)) // North Wall
-    this.entities.push(new Wall(this, 1, 14, 25, 1)) // South Wall
-    this.entities.push(new Wall(this, 10, 4, 1, 7)) // Middle Wall
-    
-    this.entities.push(new Ball(this, 10, 2))
-    this.entities.push(new Ball(this, 10, 12))
-    
-    // Rearrange: 
-    this.entities.sort((a, b) => a.z - b.z)
-  }
   
   shoot () {
     if (!this.hero || !this.playerInput.pointerCurrent) return
