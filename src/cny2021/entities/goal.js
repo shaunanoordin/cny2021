@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import { PLAYER_ACTIONS, TILE_SIZE, VICTORY_TIMER } from '../constants'
+import { PLAYER_ACTIONS, TILE_SIZE } from '../constants'
 
 class Goal extends Entity {
   constructor (app, col = 0, row = 0) {
@@ -28,8 +28,7 @@ class Goal extends Entity {
     hero.speedY = Math.sin(angleToGoal) * Math.min(distanceToGoal, hero.movementSpeed)
     
     if (!this._app.victory) {
-      this._app.victory = true
-      this._app.victoryCountdown = VICTORY_TIMER
+      this._app.celebrateVictory()
     }
   }
 }

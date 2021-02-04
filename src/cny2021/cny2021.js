@@ -2,7 +2,8 @@ import {
   APP_WIDTH, APP_HEIGHT, TILE_SIZE,
   PLAYER_ACTIONS, SHAPES,
   ACCEPTABLE_INPUT_DISTANCE_FROM_HERO,
-  VICTORY_TIMER,
+  VICTORY_ANIMATION_TIME,
+  PAUSE_AFTER_VICTORY_ANIMATION,
 } from './constants'
 import Physics from './physics'
 import Levels from './levels'
@@ -111,6 +112,10 @@ class CNY2021 {
       this.checkCollisions(timeStep)
     }
     
+    if (this.victory && this.victoryCountdown <= 0) {
+      this.setInteractionUI(true)
+    }
+    
     if (this.victoryCountdown > 0) {
       this.victoryCountdown = Math.max(0, this.victoryCountdown - timeStep)
     }
@@ -158,10 +163,11 @@ class CNY2021 {
     this.entities.forEach(entity => entity.paint())
     
     // Draw player input
-    if (this.playerAction === PLAYER_ACTIONS.PULLING
-        && this.hero
-        && this.playerInput.pointerCurrent
-       ) {
+    if (
+      this.playerAction === PLAYER_ACTIONS.PULLING
+      && this.hero
+      && this.playerInput.pointerCurrent
+    ) {
       
       const inputCoords = this.playerInput.pointerCurrent
       
@@ -191,7 +197,8 @@ class CNY2021 {
     
     // Draw victory
     if (this.victory) {
-      const fontSize = Math.floor((this.victoryCountdown / VICTORY_TIMER) * 50 + 10)
+      const victoryAnimationTime = Math.max(this.victoryCountdown - PAUSE_AFTER_VICTORY_ANIMATION, 0)
+      const fontSize = Math.floor((victoryAnimationTime / VICTORY_ANIMATION_TIME) * 50 + 10)
       
       c2d.fillStyle = '#fff'
       c2d.strokeStyle = '#000'
@@ -356,6 +363,11 @@ class CNY2021 {
     
     this.hero.speedX = Math.cos(rotation) * movementSpeed
     this.hero.speedY = Math.sin(rotation) * movementSpeed
+  }
+
+  celebrateVictory () {
+    this.victory = true
+    this.victoryCountdown = VICTORY_ANIMATION_TIME + PAUSE_AFTER_VICTORY_ANIMATION
   }
     
   /*
