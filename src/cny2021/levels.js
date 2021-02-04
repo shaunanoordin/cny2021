@@ -8,6 +8,10 @@ import Ball from './entities/ball'
 export default class Levels {
   constructor (app) {
     this._app = app
+    this.current = 1
+    this.levelGenerators = [
+      this.generate_level0.bind(this),
+    ]
   }
   
   reset () {
@@ -24,26 +28,52 @@ export default class Levels {
   
   load (level = 0) {
     const app = this._app
+    this.current = level
     
     this.reset()
     
-    app.hero = new Hero(app, 5, 7)
-    app.entities.push(app.hero)
-    app.camera.target = app.hero
-    
-    app.entities.push(new Goal(app, 16, 7))
-    
-    app.entities.push(new Wall(app, 0, 0, 1, 15)) // West Wall
-    app.entities.push(new Wall(app, 26, 0, 1, 15)) // East Wall
-    app.entities.push(new Wall(app, 1, 0, 25, 1)) // North Wall
-    app.entities.push(new Wall(app, 1, 14, 25, 1)) // South Wall
-    app.entities.push(new Wall(app, 10, 4, 1, 7)) // Middle Wall
-    
-    app.entities.push(new Ball(app, 10, 2))
-    app.entities.push(new Ball(app, 10, 12))
+    if (this.levelGenerators[level]) {
+      this.levelGenerators[level]()
+    } else {
+      this.generate_default()
+    }
     
     // Rearrange: 
     app.entities.sort((a, b) => a.z - b.z)
+  }
+  
+  reload () {
+    this.load(this.current)
+  }
+  
+  generate_default () {
+    const app = this._app
+    
+    app.hero = new Hero(app, 5, 3)
+    app.entities.push(app.hero)
+    app.camera.target = app.hero
+    
+    app.entities.push(new Goal(app, 13, 3))
+    
+    app.entities.push(new Wall(app, 0, 0, 1, 7)) // West Wall
+    app.entities.push(new Wall(app, 16, 0, 1, 7)) // East Wall
+    app.entities.push(new Wall(app, 1, 0, 15, 1)) // North Wall
+    app.entities.push(new Wall(app, 1, 6, 15, 1)) // South Wall
+  }
+  
+  generate_level0 () {
+    const app = this._app
+    
+    app.hero = new Hero(app, 5, 3)
+    app.entities.push(app.hero)
+    app.camera.target = app.hero
+    
+    app.entities.push(new Goal(app, 13, 3))
+    
+    app.entities.push(new Wall(app, 0, 0, 1, 7)) // West Wall
+    app.entities.push(new Wall(app, 16, 0, 1, 7)) // East Wall
+    app.entities.push(new Wall(app, 1, 0, 15, 1)) // North Wall
+    app.entities.push(new Wall(app, 1, 6, 15, 1)) // South Wall
   }
   
 }
