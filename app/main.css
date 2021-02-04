@@ -94,7 +94,7 @@ table th {
   visibility: visible;
   background: rgba(128, 128, 128, 0.5);
 }
-#app > main #button-home, #app > main #button-fullscreen {
+#app > main .ui-button {
   position: absolute;
 }
 #app > main #button-home {
@@ -104,6 +104,10 @@ table th {
 #app > main #button-fullscreen {
   top: 0.5em;
   right: 0.5em;
+}
+#app > main #button-reload {
+  top: 2.5em;
+  left: 0.5em;
 }
 
 /*# sourceMappingURL=main.css.map */

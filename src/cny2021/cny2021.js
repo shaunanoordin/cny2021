@@ -19,6 +19,7 @@ class CNY2021 {
       interaction: document.getElementById('interaction'),
       buttonHome: document.getElementById('button-home'),
       buttonFullscreen: document.getElementById('button-fullscreen'),
+      buttonReload: document.getElementById('button-reload'),
       levelsList: document.getElementById('levels-list'),
     }
     
@@ -233,6 +234,7 @@ class CNY2021 {
     
     this.html.buttonHome.addEventListener('click', this.buttonHome_onClick.bind(this))
     this.html.buttonFullscreen.addEventListener('click', this.buttonFullscreen_onClick.bind(this))
+    this.html.buttonReload.addEventListener('click', this.buttonReload_onClick.bind(this))
     
     window.addEventListener('resize', this.updateUI.bind(this))
     this.updateUI()
@@ -265,8 +267,10 @@ class CNY2021 {
     this.interactionUI = interactionUI
     if (interactionUI) {
       this.html.interaction.style.visibility = 'visible'
+      this.html.buttonReload.style.visibility = 'hidden'
     } else {
       this.html.interaction.style.visibility = 'hidden'
+      this.html.buttonReload.style.visibility = 'visible'
     }
   }
   
@@ -333,6 +337,10 @@ class CNY2021 {
       this.html.main.className = ''
     }
     this.updateUI()
+  }
+  
+  buttonReload_onClick () {
+    this.levels.reload()
   }
   
   /*
