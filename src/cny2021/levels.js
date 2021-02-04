@@ -11,6 +11,7 @@ export default class Levels {
     this.current = 1
     this.levelGenerators = [
       this.generate_level0.bind(this),
+      this.generate_level1.bind(this),
     ]
   }
   
@@ -74,6 +75,24 @@ export default class Levels {
     app.entities.push(new Wall(app, 16, 0, 1, 7)) // East Wall
     app.entities.push(new Wall(app, 1, 0, 15, 1)) // North Wall
     app.entities.push(new Wall(app, 1, 6, 15, 1)) // South Wall
+  }
+  
+  generate_level1 () {
+    const app = this._app
+    
+    app.hero = new Hero(app, 5, 3)
+    app.entities.push(app.hero)
+    app.camera.target = app.hero
+    
+    app.entities.push(new Goal(app, 13, 3))
+    
+    app.entities.push(new Wall(app, 0, 0, 1, 7)) // West Wall
+    app.entities.push(new Wall(app, 16, 0, 1, 7)) // East Wall
+    app.entities.push(new Wall(app, 1, 0, 15, 1)) // North Wall
+    app.entities.push(new Wall(app, 1, 6, 15, 1)) // South Wall
+    
+    app.entities.push(new Ball(app, 7, 2))
+    app.entities.push(new Ball(app, 7, 4))
   }
   
 }

@@ -8,6 +8,7 @@ import Physics from './physics'
 import Levels from './levels'
 
 const DEBUG = true
+const STARTING_LEVEL = 0
 
 class CNY2021 {
   constructor () {
@@ -17,6 +18,7 @@ class CNY2021 {
       interaction: document.getElementById('interaction'),
       buttonHome: document.getElementById('button-home'),
       buttonFullscreen: document.getElementById('button-fullscreen'),
+      levelsList: document.getElementById('levels-list'),
     }
     
     this.interactionUI = false
@@ -79,7 +81,8 @@ class CNY2021 {
     
     if (allAssetsLoaded) {
       this.initialised = true
-      this.levels.load(0)
+      this.updateLevelsList()
+      this.levels.load(STARTING_LEVEL)
     }
   }
   
@@ -235,6 +238,20 @@ class CNY2021 {
     this.html.interaction.style.height = `${canvasBounds.height}px`
     this.html.interaction.style.top = '0'
     this.html.interaction.style.left = `${canvasBounds.left}px`
+  }
+  
+  updateLevelsList () {
+    const list = this.html.levelsList
+    while (list.firstChild) { list.removeChild(list.firstChild) }
+    for (let i = 0 ; i < this.levels.levelGenerators.length ; i++) {
+      const button = document.createElement('button')
+      button.textContent = `Level ${i + 1}`
+      button.addEventListener('click', () => {
+        this.levels.load(i)
+        this.setInteractionUI(false)
+      })
+      list.appendChild(button)
+    }
   }
   
   setInteractionUI (interactionUI) {
