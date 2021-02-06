@@ -2,28 +2,29 @@ import {
   APP_WIDTH, APP_HEIGHT, TILE_SIZE,
   PLAYER_ACTIONS, SHAPES,
   ACCEPTABLE_INPUT_DISTANCE_FROM_HERO,
-  VICTORY_TIMER,
+  VICTORY_ANIMATION_TIME,
+  PAUSE_AFTER_VICTORY_ANIMATION,
 } from './constants'
 import Physics from './physics'
+import Levels from './levels'
 
-import Entity from './entity'
-import Hero from './entities/hero'
-import Goal from './entities/goal'
-import Wall from './entities/wall'
-import Ball from './entities/ball'
+const DEBUG = true
+const STARTING_LEVEL = 0
 
 class CNY2021 {
   constructor () {
     this.html = {
       main: document.getElementById('main'),
       canvas: document.getElementById('canvas'),
-      interaction: document.getElementById('interaction'),
+      menu: document.getElementById('menu'),
       buttonHome: document.getElementById('button-home'),
       buttonFullscreen: document.getElementById('button-fullscreen'),
+      buttonReload: document.getElementById('button-reload'),
+      levelsList: document.getElementById('levels-list'),
     }
     
-    this.interactionUI = false
-    this.setInteractionUI(false)
+    this.menu = false
+    this.setMenu(false)
     
     this.canvas2d = this.html.canvas.getContext('2d')
     this.canvasWidth = APP_WIDTH
@@ -44,6 +45,7 @@ class CNY2021 {
     
     this.hero = null
     this.entities = []
+    this.levels = new Levels(this)
     
     this.playerAction = PLAYER_ACTIONS.IDLE
     this.playerInput = {
@@ -81,7 +83,8 @@ class CNY2021 {
     
     if (allAssetsLoaded) {
       this.initialised = true
-      this.loadLevel(0)
+      this.updateLevelsList()
+      this.levels.load(STARTING_LEVEL)
     }
   }
   
@@ -105,9 +108,13 @@ class CNY2021 {
   }
   
   play (timeStep) {
-    if (!this.interactionUI) {
+    if (!this.menu) {
       this.entities.forEach(entity => entity.play(timeStep))
       this.checkCollisions(timeStep)
+    }
+    
+    if (this.victory && this.victoryCountdown <= 0) {
+      this.setMenu(true)
     }
     
     if (this.victoryCountdown > 0) {
@@ -141,15 +148,15 @@ class CNY2021 {
         c2d.stroke()
         
         // Debug Grid
-        /*
-        c2d.fillStyle = '#ccc'
-        c2d.font = `1em Source Code Pro`
-        c2d.textAlign = 'center'
-        c2d.textBaseline = 'middle'
-        const col = Math.floor((x - this.camera.x) / TILE_SIZE)
-        const row = Math.floor((y - this.camera.y) / TILE_SIZE)
-        c2d.fillText(`${col},${row}`, x + TILE_SIZE / 2, y + TILE_SIZE / 2)
-        */
+        if (DEBUG) {
+          c2d.fillStyle = '#ccc'
+          c2d.font = `1em Source Code Pro`
+          c2d.textAlign = 'center'
+          c2d.textBaseline = 'middle'
+          const col = Math.floor((x - this.camera.x) / TILE_SIZE)
+          const row = Math.floor((y - this.camera.y) / TILE_SIZE)
+          c2d.fillText(`${col},${row}`, x + TILE_SIZE / 2, y + TILE_SIZE / 2)
+        }
       }
     }
     
@@ -157,10 +164,11 @@ class CNY2021 {
     this.entities.forEach(entity => entity.paint())
     
     // Draw player input
-    if (this.playerAction === PLAYER_ACTIONS.PULLING
-        && this.hero
-        && this.playerInput.pointerCurrent
-       ) {
+    if (
+      this.playerAction === PLAYER_ACTIONS.PULLING
+      && this.hero
+      && this.playerInput.pointerCurrent
+    ) {
       
       const inputCoords = this.playerInput.pointerCurrent
       
@@ -190,7 +198,8 @@ class CNY2021 {
     
     // Draw victory
     if (this.victory) {
-      const fontSize = Math.floor((this.victoryCountdown / VICTORY_TIMER) * 50 + 10)
+      const victoryAnimationTime = Math.max(this.victoryCountdown - PAUSE_AFTER_VICTORY_ANIMATION, 0)
+      const fontSize = Math.floor((victoryAnimationTime / VICTORY_ANIMATION_TIME) * 50 + 10)
       
       c2d.fillStyle = '#fff'
       c2d.strokeStyle = '#000'
@@ -217,7 +226,7 @@ class CNY2021 {
     this.html.canvas.addEventListener('pointerup', this.onPointerUp.bind(this))
     this.html.canvas.addEventListener('pointercancel', this.onPointerUp.bind(this))
     
-    // Prevent "touch and hold to open context menu" interaction on touchscreens.
+    // Prevent "touch and hold to open context menu" menu on touchscreens.
     this.html.canvas.addEventListener('touchstart', stopEvent)
     this.html.canvas.addEventListener('touchmove', stopEvent)
     this.html.canvas.addEventListener('touchend', stopEvent)
@@ -225,6 +234,7 @@ class CNY2021 {
     
     this.html.buttonHome.addEventListener('click', this.buttonHome_onClick.bind(this))
     this.html.buttonFullscreen.addEventListener('click', this.buttonFullscreen_onClick.bind(this))
+    this.html.buttonReload.addEventListener('click', this.buttonReload_onClick.bind(this))
     
     window.addEventListener('resize', this.updateUI.bind(this))
     this.updateUI()
@@ -233,18 +243,34 @@ class CNY2021 {
   updateUI () {
     // Fit the Interaction layer to the canvas
     const canvasBounds = this.html.canvas.getBoundingClientRect()
-    this.html.interaction.style.width = `${canvasBounds.width}px`
-    this.html.interaction.style.height = `${canvasBounds.height}px`
-    this.html.interaction.style.top = '0'
-    this.html.interaction.style.left = `${canvasBounds.left}px`
+    this.html.menu.style.width = `${canvasBounds.width}px`
+    this.html.menu.style.height = `${canvasBounds.height}px`
+    this.html.menu.style.top = '0'
+    this.html.menu.style.left = `${canvasBounds.left}px`
   }
   
-  setInteractionUI (interactionUI) {
-    this.interactionUI = interactionUI
-    if (interactionUI) {
-      this.html.interaction.style.visibility = 'visible'
+  updateLevelsList () {
+    const list = this.html.levelsList
+    while (list.firstChild) { list.removeChild(list.firstChild) }
+    for (let i = 0 ; i < this.levels.levelGenerators.length ; i++) {
+      const button = document.createElement('button')
+      button.textContent = `Level ${i + 1}`
+      button.addEventListener('click', () => {
+        this.levels.load(i)
+        this.setMenu(false)
+      })
+      list.appendChild(button)
+    }
+  }
+  
+  setMenu (menu) {
+    this.menu = menu
+    if (menu) {
+      this.html.menu.style.visibility = 'visible'
+      this.html.buttonReload.style.visibility = 'hidden'
     } else {
-      this.html.interaction.style.visibility = 'hidden'
+      this.html.menu.style.visibility = 'hidden'
+      this.html.buttonReload.style.visibility = 'visible'
     }
   }
   
@@ -296,7 +322,7 @@ class CNY2021 {
   }
   
   buttonHome_onClick () {
-    this.setInteractionUI(!this.interactionUI)
+    this.setMenu(!this.menu)
   }
   
   buttonFullscreen_onClick () {
@@ -313,43 +339,14 @@ class CNY2021 {
     this.updateUI()
   }
   
+  buttonReload_onClick () {
+    this.levels.reload()
+  }
+  
   /*
   Section: Gameplay
   ----------------------------------------------------------------------------
    */
-  
-  resetLevel () {
-    this.hero = undefined
-    this.entities = []
-    this.camera = {
-      target: null, x: 0, y: 0,
-    }
-    this.playerAction = PLAYER_ACTIONS.IDLE
-    this.victory = 0
-    this.victoryCountdown = 0
-  }
-  
-  loadLevel (level = 0) {
-    this.resetLevel()
-    
-    this.hero = new Hero(this, 5, 7)
-    this.entities.push(this.hero)
-    this.camera.target = this.hero
-    
-    this.entities.push(new Goal(this, 16, 7))
-    
-    this.entities.push(new Wall(this, 0, 0, 1, 15)) // West Wall
-    this.entities.push(new Wall(this, 26, 0, 1, 15)) // East Wall
-    this.entities.push(new Wall(this, 1, 0, 25, 1)) // North Wall
-    this.entities.push(new Wall(this, 1, 14, 25, 1)) // South Wall
-    this.entities.push(new Wall(this, 10, 4, 1, 7)) // Middle Wall
-    
-    this.entities.push(new Ball(this, 10, 2))
-    this.entities.push(new Ball(this, 10, 12))
-    
-    // Rearrange: 
-    this.entities.sort((a, b) => a.z - b.z)
-  }
   
   shoot () {
     if (!this.hero || !this.playerInput.pointerCurrent) return
@@ -374,6 +371,11 @@ class CNY2021 {
     
     this.hero.speedX = Math.cos(rotation) * movementSpeed
     this.hero.speedY = Math.sin(rotation) * movementSpeed
+  }
+
+  celebrateVictory () {
+    this.victory = true
+    this.victoryCountdown = VICTORY_ANIMATION_TIME + PAUSE_AFTER_VICTORY_ANIMATION
   }
     
   /*

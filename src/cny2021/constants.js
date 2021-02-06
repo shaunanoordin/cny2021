@@ -43,4 +43,5 @@ export const EXPECTED_FRAMES_PER_SECOND = 60
 export const EXPECTED_TIMESTEP = 1000 / EXPECTED_FRAMES_PER_SECOND
 
 // Time it takes to play victory animation
-export const VICTORY_TIMER = 500  // milliseconds
+export const VICTORY_ANIMATION_TIME = 500  // milliseconds
+export const PAUSE_AFTER_VICTORY_ANIMATION = 1000 // milliseconds

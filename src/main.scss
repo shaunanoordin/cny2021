@@ -104,7 +104,7 @@ table {
     max-height: 100vh;
   }
   
-  #interaction {
+  #menu {
     display: block;
     overflow: auto;
     position: absolute;
@@ -113,7 +113,7 @@ table {
     background: rgba(128, 128, 128, 0.5);
   }
   
-  #button-home, #button-fullscreen {
+  .ui-button {
     position: absolute;
   }
   
@@ -125,5 +125,10 @@ table {
   #button-fullscreen {
     top: 0.5em;
     right: 0.5em;
+  }
+  
+  #button-reload {
+    top: 2.5em;
+    left: 0.5em;
   }
 }

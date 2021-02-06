@@ -23,7 +23,7 @@ class Entity {
     this.shapePolygonPath = null  // Only applicable if shape === SHAPES.POLYGON
     this.solid = true
     this.movable = true
-    this.mass = 1  // Only matters if solid && movable
+    this.mass = 2  // Only matters if solid && movable
     
     // this.moveAcceleration = 0.5
     this.moveDeceleration = 0.5
