@@ -71,7 +71,7 @@ class Entity {
     const camera = this._app.camera
     
     c2d.fillStyle = this.colour
-    c2d.strokeStyle = '#000'
+    c2d.strokeStyle = '#444'
     c2d.lineWidth = this.mass
     
     // Draw shape outline
