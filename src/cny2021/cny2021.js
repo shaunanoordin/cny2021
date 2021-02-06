@@ -7,6 +7,7 @@ import {
 } from './constants'
 import Physics from './physics'
 import Levels from './levels'
+import ImageAsset from './image-asset'
 
 const DEBUG = true
 const STARTING_LEVEL = 0
@@ -36,11 +37,11 @@ class CNY2021 {
       y: 0,      
     }
     
-    this.initialiseUI()
+    this.setupUI()
     
     this.initialised = false
     this.assets = {
-      // ...
+      // hero: new ImageAsset('assets/hero.png'),
     }
     
     this.hero = null
@@ -83,6 +84,7 @@ class CNY2021 {
     
     if (allAssetsLoaded) {
       this.initialised = true
+      this.showUI()
       this.updateLevelsList()
       this.levels.load(STARTING_LEVEL)
     }
@@ -217,7 +219,7 @@ class CNY2021 {
   ----------------------------------------------------------------------------
    */
   
-  initialiseUI () {
+  setupUI () {
     this.html.canvas.width = this.canvasWidth
     this.html.canvas.height = this.canvasHeight
     
@@ -238,6 +240,17 @@ class CNY2021 {
     
     window.addEventListener('resize', this.updateUI.bind(this))
     this.updateUI()
+    this.hideUI()  // Hide until all assets are loaded
+  }
+  
+  hideUI () {
+    this.html.buttonHome.style.visibility = 'hidden'
+    this.html.buttonReload.style.visibility = 'hidden'
+  }
+  
+  showUI () {
+    this.html.buttonHome.style.visibility = 'visible'
+    this.html.buttonReload.style.visibility = 'visible'
   }
   
   updateUI () {
