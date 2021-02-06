@@ -86,7 +86,7 @@ table th {
 #app > main.fullscreen #canvas {
   max-height: 100vh;
 }
-#app > main #interaction {
+#app > main #menu {
   display: block;
   overflow: auto;
   position: absolute;

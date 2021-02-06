@@ -16,15 +16,15 @@ class CNY2021 {
     this.html = {
       main: document.getElementById('main'),
       canvas: document.getElementById('canvas'),
-      interaction: document.getElementById('interaction'),
+      menu: document.getElementById('menu'),
       buttonHome: document.getElementById('button-home'),
       buttonFullscreen: document.getElementById('button-fullscreen'),
       buttonReload: document.getElementById('button-reload'),
       levelsList: document.getElementById('levels-list'),
     }
     
-    this.interactionUI = false
-    this.setInteractionUI(false)
+    this.menu = false
+    this.setMenu(false)
     
     this.canvas2d = this.html.canvas.getContext('2d')
     this.canvasWidth = APP_WIDTH
@@ -108,13 +108,13 @@ class CNY2021 {
   }
   
   play (timeStep) {
-    if (!this.interactionUI) {
+    if (!this.menu) {
       this.entities.forEach(entity => entity.play(timeStep))
       this.checkCollisions(timeStep)
     }
     
     if (this.victory && this.victoryCountdown <= 0) {
-      this.setInteractionUI(true)
+      this.setMenu(true)
     }
     
     if (this.victoryCountdown > 0) {
@@ -226,7 +226,7 @@ class CNY2021 {
     this.html.canvas.addEventListener('pointerup', this.onPointerUp.bind(this))
     this.html.canvas.addEventListener('pointercancel', this.onPointerUp.bind(this))
     
-    // Prevent "touch and hold to open context menu" interaction on touchscreens.
+    // Prevent "touch and hold to open context menu" menu on touchscreens.
     this.html.canvas.addEventListener('touchstart', stopEvent)
     this.html.canvas.addEventListener('touchmove', stopEvent)
     this.html.canvas.addEventListener('touchend', stopEvent)
@@ -243,10 +243,10 @@ class CNY2021 {
   updateUI () {
     // Fit the Interaction layer to the canvas
     const canvasBounds = this.html.canvas.getBoundingClientRect()
-    this.html.interaction.style.width = `${canvasBounds.width}px`
-    this.html.interaction.style.height = `${canvasBounds.height}px`
-    this.html.interaction.style.top = '0'
-    this.html.interaction.style.left = `${canvasBounds.left}px`
+    this.html.menu.style.width = `${canvasBounds.width}px`
+    this.html.menu.style.height = `${canvasBounds.height}px`
+    this.html.menu.style.top = '0'
+    this.html.menu.style.left = `${canvasBounds.left}px`
   }
   
   updateLevelsList () {
@@ -257,19 +257,19 @@ class CNY2021 {
       button.textContent = `Level ${i + 1}`
       button.addEventListener('click', () => {
         this.levels.load(i)
-        this.setInteractionUI(false)
+        this.setMenu(false)
       })
       list.appendChild(button)
     }
   }
   
-  setInteractionUI (interactionUI) {
-    this.interactionUI = interactionUI
-    if (interactionUI) {
-      this.html.interaction.style.visibility = 'visible'
+  setMenu (menu) {
+    this.menu = menu
+    if (menu) {
+      this.html.menu.style.visibility = 'visible'
       this.html.buttonReload.style.visibility = 'hidden'
     } else {
-      this.html.interaction.style.visibility = 'hidden'
+      this.html.menu.style.visibility = 'hidden'
       this.html.buttonReload.style.visibility = 'visible'
     }
   }
@@ -322,7 +322,7 @@ class CNY2021 {
   }
   
   buttonHome_onClick () {
-    this.setInteractionUI(!this.interactionUI)
+    this.setMenu(!this.menu)
   }
   
   buttonFullscreen_onClick () {
