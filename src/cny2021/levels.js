@@ -4,6 +4,7 @@ import Hero from './entities/hero'
 import Goal from './entities/goal'
 import Wall from './entities/wall'
 import Ball from './entities/ball'
+import Instructions from './entities/instructions'
 
 export default class Levels {
   constructor (app) {
@@ -70,6 +71,8 @@ export default class Levels {
     app.camera.target = app.hero
     
     app.entities.push(new Goal(app, 13, 3))
+    
+    app.entities.push(new Instructions(app, 5, 3))
     
     app.entities.push(new Wall(app, 0, 0, 1, 7)) // West Wall
     app.entities.push(new Wall(app, 16, 0, 1, 7)) // East Wall

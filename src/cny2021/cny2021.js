@@ -41,8 +41,9 @@ class CNY2021 {
     
     this.initialised = false
     this.assets = {
-      hero: new ImageAsset('assets/hero.png'),
       goal: new ImageAsset('assets/goal.png'),
+      hero: new ImageAsset('assets/hero.png'),
+      instructions: new ImageAsset('assets/instructions.png'),
     }
     
     this.hero = null
