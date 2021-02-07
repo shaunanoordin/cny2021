@@ -14,6 +14,17 @@ class Instructions extends Entity {
     this.animationCounterMax = 3000
   }
   
+  play (timeStep) {
+    super.play(timeStep)
+    
+    // Stick to the hero
+    const hero = this._app.hero
+    if (hero) {
+      this.x = hero.x
+      this.y = hero.y
+    }
+  }
+  
   paint () {
     // super.paint()
     
