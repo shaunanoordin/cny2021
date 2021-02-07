@@ -1,4 +1,4 @@
-import { PLAYER_ACTIONS } from './constants'
+import { PLAYER_ACTIONS, IDLE_TIME_UNTIL_INSTRUCTIONS } from './constants'
 
 import Hero from './entities/hero'
 import Goal from './entities/goal'
@@ -19,6 +19,7 @@ export default class Levels {
   reset () {
     const app = this._app
     app.hero = undefined
+    app.instructions = null
     app.entities = []
     app.camera = {
       target: null, x: 0, y: 0,
@@ -26,6 +27,7 @@ export default class Levels {
     app.playerAction = PLAYER_ACTIONS.IDLE
     app.victory = 0
     app.victoryCountdown = 0
+    app.instructionsCountdown = IDLE_TIME_UNTIL_INSTRUCTIONS
   }
   
   load (level = 0) {
@@ -72,7 +74,8 @@ export default class Levels {
     
     app.entities.push(new Goal(app, 13, 3))
     
-    app.entities.push(new Instructions(app, 5, 3))
+    app.instructions = new Instructions(app, 5, 3)
+    app.entities.push(app.instructions)
     
     app.entities.push(new Wall(app, 0, 0, 1, 7)) // West Wall
     app.entities.push(new Wall(app, 16, 0, 1, 7)) // East Wall

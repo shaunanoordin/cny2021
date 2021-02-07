@@ -4,6 +4,7 @@ import {
   ACCEPTABLE_INPUT_DISTANCE_FROM_HERO,
   VICTORY_ANIMATION_TIME,
   PAUSE_AFTER_VICTORY_ANIMATION,
+  IDLE_TIME_UNTIL_INSTRUCTIONS,
 } from './constants'
 import Physics from './physics'
 import Levels from './levels'
@@ -47,6 +48,7 @@ class CNY2021 {
     }
     
     this.hero = null
+    this.instructions = null
     this.entities = []
     this.levels = new Levels(this)
     
@@ -59,6 +61,7 @@ class CNY2021 {
     
     this.victory = false
     this.victoryCountdown = 0
+    this.instructionsCountdown = IDLE_TIME_UNTIL_INSTRUCTIONS
 
     this.prevTime = null
     this.nextFrame = window.requestAnimationFrame(this.main.bind(this))
@@ -112,11 +115,17 @@ class CNY2021 {
   }
   
   play (timeStep) {
-    if (!this.menu) {
-      this.entities.forEach(entity => entity.play(timeStep))
-      this.checkCollisions(timeStep)
-    }
+    // If the menu is open, pause all action gameplay
+    if (this.menu) return
     
+    // Run the action gameplay
+    // ----------------
+    this.entities.forEach(entity => entity.play(timeStep))
+    this.checkCollisions(timeStep)
+    // ----------------
+    
+    // Victory check!
+    // ----------------
     if (this.victory && this.victoryCountdown <= 0) {
       this.setMenu(true)
     }
@@ -124,6 +133,23 @@ class CNY2021 {
     if (this.victoryCountdown > 0) {
       this.victoryCountdown = Math.max(0, this.victoryCountdown - timeStep)
     }
+    // ----------------
+    
+    // Instructions check!
+    // ----------------
+    if (this.instructions && !this.victory) {
+      if (this?.hero.movementSpeed > 0) {
+        // If the hero is moving or being interacted with, hide the instructions.
+        this.instructionsCountdown = IDLE_TIME_UNTIL_INSTRUCTIONS
+          
+      } else if (this.instructionsCountdown > 0) {
+        this.instructionsCountdown = Math.max(0, this.instructionsCountdown - timeStep)
+        if (this.instructionsCountdown === 0) {
+          this.instructions.animationCounter = 0  // Reset the animation counter for a smoother animation
+        }
+      }
+    }
+    // ----------------
   }
   
   paint () {

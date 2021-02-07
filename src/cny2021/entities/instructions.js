@@ -22,6 +22,9 @@ class Instructions extends Entity {
     const camera = app.camera
     const animationSpritesheet = app.assets.instructions
     
+    // Hide the instructions if the "idle timer" is still counting
+    if (app.instructionsCountdown > 0) return
+    
     const SPRITE_SIZE = 64
     let SPRITE_OFFSET_X = 0
     let SPRITE_OFFSET_Y = 0
