@@ -138,7 +138,7 @@ class CNY2021 {
     // Instructions check!
     // ----------------
     if (this.instructions && !this.victory) {
-      if (this?.hero.movementSpeed > 0) {
+      if (this?.hero.movementSpeed > 0 || this.playerAction === PLAYER_ACTIONS.PULLING) {
         // If the hero is moving or being interacted with, hide the instructions.
         this.instructionsCountdown = IDLE_TIME_UNTIL_INSTRUCTIONS
           
