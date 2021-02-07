@@ -30,6 +30,8 @@ class Entity {
     this.moveMaxSpeed = 16
     
     this.colour = '#ccc'
+    this.animationCounter = 0
+    this.animationCounterMax = 0
   }
   
   play (timeStep) {
@@ -46,6 +48,11 @@ class Entity {
 
     this.speedX = newMoveSpeed * Math.cos(curRotation)
     this.speedY = newMoveSpeed * Math.sin(curRotation)
+    
+    // Step through animation
+    if (this.animationCounterMax > 0) {
+      this.animationCounter = (this.animationCounter + timeStep) % this.animationCounterMax
+    }
   }
   
   paint () {
@@ -71,7 +78,7 @@ class Entity {
     const camera = this._app.camera
     
     c2d.fillStyle = this.colour
-    c2d.strokeStyle = '#000'
+    c2d.strokeStyle = '#444'
     c2d.lineWidth = this.mass
     
     // Draw shape outline

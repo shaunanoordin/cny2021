@@ -4,11 +4,13 @@ import {
   ACCEPTABLE_INPUT_DISTANCE_FROM_HERO,
   VICTORY_ANIMATION_TIME,
   PAUSE_AFTER_VICTORY_ANIMATION,
+  IDLE_TIME_UNTIL_INSTRUCTIONS,
 } from './constants'
 import Physics from './physics'
 import Levels from './levels'
+import ImageAsset from './image-asset'
 
-const DEBUG = true
+const DEBUG = false
 const STARTING_LEVEL = 0
 
 class CNY2021 {
@@ -36,14 +38,17 @@ class CNY2021 {
       y: 0,      
     }
     
-    this.initialiseUI()
+    this.setupUI()
     
     this.initialised = false
     this.assets = {
-      // ...
+      goal: new ImageAsset('assets/goal.png'),
+      hero: new ImageAsset('assets/hero.png'),
+      instructions: new ImageAsset('assets/instructions.png'),
     }
     
     this.hero = null
+    this.instructions = null
     this.entities = []
     this.levels = new Levels(this)
     
@@ -56,6 +61,7 @@ class CNY2021 {
     
     this.victory = false
     this.victoryCountdown = 0
+    this.instructionsCountdown = IDLE_TIME_UNTIL_INSTRUCTIONS
 
     this.prevTime = null
     this.nextFrame = window.requestAnimationFrame(this.main.bind(this))
@@ -83,6 +89,7 @@ class CNY2021 {
     
     if (allAssetsLoaded) {
       this.initialised = true
+      this.showUI()
       this.updateLevelsList()
       this.levels.load(STARTING_LEVEL)
     }
@@ -108,11 +115,17 @@ class CNY2021 {
   }
   
   play (timeStep) {
-    if (!this.menu) {
-      this.entities.forEach(entity => entity.play(timeStep))
-      this.checkCollisions(timeStep)
-    }
+    // If the menu is open, pause all action gameplay
+    if (this.menu) return
     
+    // Run the action gameplay
+    // ----------------
+    this.entities.forEach(entity => entity.play(timeStep))
+    this.checkCollisions(timeStep)
+    // ----------------
+    
+    // Victory check!
+    // ----------------
     if (this.victory && this.victoryCountdown <= 0) {
       this.setMenu(true)
     }
@@ -120,6 +133,23 @@ class CNY2021 {
     if (this.victoryCountdown > 0) {
       this.victoryCountdown = Math.max(0, this.victoryCountdown - timeStep)
     }
+    // ----------------
+    
+    // Instructions check!
+    // ----------------
+    if (this.instructions && !this.victory) {
+      if (this?.hero.movementSpeed > 0 || this.playerAction === PLAYER_ACTIONS.PULLING) {
+        // If the hero is moving or being interacted with, hide the instructions.
+        this.instructionsCountdown = IDLE_TIME_UNTIL_INSTRUCTIONS
+          
+      } else if (this.instructionsCountdown > 0) {
+        this.instructionsCountdown = Math.max(0, this.instructionsCountdown - timeStep)
+        if (this.instructionsCountdown === 0) {
+          this.instructions.animationCounter = 0  // Reset the animation counter for a smoother animation
+        }
+      }
+    }
+    // ----------------
   }
   
   paint () {
@@ -217,7 +247,7 @@ class CNY2021 {
   ----------------------------------------------------------------------------
    */
   
-  initialiseUI () {
+  setupUI () {
     this.html.canvas.width = this.canvasWidth
     this.html.canvas.height = this.canvasHeight
     
@@ -238,6 +268,17 @@ class CNY2021 {
     
     window.addEventListener('resize', this.updateUI.bind(this))
     this.updateUI()
+    this.hideUI()  // Hide until all assets are loaded
+  }
+  
+  hideUI () {
+    this.html.buttonHome.style.visibility = 'hidden'
+    this.html.buttonReload.style.visibility = 'hidden'
+  }
+  
+  showUI () {
+    this.html.buttonHome.style.visibility = 'visible'
+    this.html.buttonReload.style.visibility = 'visible'
   }
   
   updateUI () {
