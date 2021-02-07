@@ -9,7 +9,7 @@ import Physics from './physics'
 import Levels from './levels'
 import ImageAsset from './image-asset'
 
-const DEBUG = true
+const DEBUG = false
 const STARTING_LEVEL = 0
 
 class CNY2021 {
@@ -42,6 +42,7 @@ class CNY2021 {
     this.initialised = false
     this.assets = {
       hero: new ImageAsset('assets/hero.png'),
+      goal: new ImageAsset('assets/goal.png'),
     }
     
     this.hero = null
