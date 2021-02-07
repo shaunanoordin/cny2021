@@ -9,6 +9,8 @@ class Hero extends Entity {
     this.x = col * TILE_SIZE + TILE_SIZE / 2
     this.y = row * TILE_SIZE + TILE_SIZE / 2
     this.z = 100
+    
+    this.animationCounterMax = 1500
   }
   
   paint () {
@@ -16,7 +18,7 @@ class Hero extends Entity {
     
     this.colour = (app.playerAction === PLAYER_ACTIONS.PULLING)
       ? '#e42'
-      : '#c66'
+      : '#c44'
     super.paint()
     
     const c2d = app.canvas2d
@@ -33,27 +35,28 @@ class Hero extends Entity {
       let srcX = 0
       let srcY = 0
 
-      const tgtSizeX = SPRITE_SIZE
-      const tgtSizeY = SPRITE_SIZE
-      const tgtX = Math.floor(this.x + camera.x) - srcSizeX / 2 + SPRITE_OFFSET_X
-      const tgtY = Math.floor(this.y + camera.y) - srcSizeY / 2 + SPRITE_OFFSET_Y
-
-      /*switch (entity.direction) {
-        case DIRECTIONS.SOUTH: srcX = SPRITE_SIZE * 0; break;
-        case DIRECTIONS.NORTH: srcX = SPRITE_SIZE * 1; break;
-        case DIRECTIONS.EAST: srcX = SPRITE_SIZE * 2; break;
-        case DIRECTIONS.WEST: srcX = SPRITE_SIZE * 3; break;
+      const tgtSizeX = SPRITE_SIZE * 1.25
+      const tgtSizeY = SPRITE_SIZE * 1.25
+      const tgtX = Math.floor(this.x + camera.x) - srcSizeX / 2 + SPRITE_OFFSET_X - (tgtSizeX - srcSizeX) / 2
+      const tgtY = Math.floor(this.y + camera.y) - srcSizeY / 2 + SPRITE_OFFSET_Y - (tgtSizeY - srcSizeY) / 2
+      
+      if (this.movementSpeed) {
+        const animationProgress = (this.animationCounter % (this.animationCounterMax / 3)) / (this.animationCounterMax / 3)
+        if (animationProgress < 0.5) {
+          srcY = 2 * SPRITE_SIZE
+        } else {
+          srcY = 3 * SPRITE_SIZE
+        }
+      } else {
+        const animationProgress = this.animationCounter / this.animationCounterMax
+        if (animationProgress < 0.5) {
+          srcY = 0
+        } else {
+          srcY = SPRITE_SIZE
+        }
       }
-
-      switch (entity.animationName) {
-        case 'move-1': srcY = SPRITE_SIZE * 1; break;
-        case 'move-2': srcY = SPRITE_SIZE * 2; break;
-        case 'move-3': srcY = SPRITE_SIZE * 3; break;
-        case 'attack-windup': srcY = SPRITE_SIZE * 4; break;
-        case 'attack-active': srcY = SPRITE_SIZE * 5; break;
-        case 'attack-winddown': srcY = SPRITE_SIZE * 5; break;
-        case 'dash': srcY = SPRITE_SIZE * 1; break;
-      }*/
+      
+      srcX = (this.speedX < 0) ? 0 : SPRITE_SIZE
 
       c2d.drawImage(animationSpritesheet.img, srcX, srcY, srcSizeX, srcSizeY, tgtX, tgtY, tgtSizeX, tgtSizeY)
     }
