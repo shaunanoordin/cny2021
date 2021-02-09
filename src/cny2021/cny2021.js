@@ -191,7 +191,7 @@ class CNY2021 {
           c2d.textBaseline = 'middle'
           const col = Math.floor((x - this.camera.x) / TILE_SIZE)
           const row = Math.floor((y - this.camera.y) / TILE_SIZE)
-          c2d.fillText(`${col},${row}`, x + TILE_SIZE / 2, y + TILE_SIZE / 2)
+          c2d.fillText(col + ',' + row, x + TILE_SIZE / 2, y + TILE_SIZE / 2)  // using template strings here messes up colours in Brackets.
         }
       }
     }
@@ -327,7 +327,10 @@ class CNY2021 {
       })
 
       const info = document.createElement('span')
-      info.textContent = `score: ${0}`
+      const highScore = this.levels.highScores[i]
+      info.textContent = (highScore !== undefined)
+        ? `best score: ${highScore}`
+        : 'new'
       
       row.append(button)
       row.append(info)
@@ -439,7 +442,7 @@ class CNY2021 {
     )
     
     console.log('MOVEMENT SPEED: ', movementSpeed)
-    console.log(`STARTING COORDS: ${this.hero.x}, ${this.hero.y}`)
+    console.log('STARTING COORDS: ' + this.hero.x + ' , ' + this.hero.y)  // using template strings here messes up colours in Brackets.
     
     this.hero.speedX = Math.cos(rotation) * movementSpeed
     this.hero.speedY = Math.sin(rotation) * movementSpeed
@@ -448,8 +451,11 @@ class CNY2021 {
   }
 
   celebrateVictory () {
+    if (this.victory) return
     this.victory = true
     this.victoryCountdown = VICTORY_ANIMATION_TIME + PAUSE_AFTER_VICTORY_ANIMATION
+    this.levels.registerScore(this.score)
+    this.updateLevelsList()
   }
     
   /*

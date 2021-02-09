@@ -16,6 +16,7 @@ export default class Levels {
       this.generate_level0.bind(this),
       this.generate_level1.bind(this),
     ]
+    this.highScores = this.levelGenerators.map(() => undefined)
   }
   
   reset () {
@@ -51,6 +52,15 @@ export default class Levels {
   
   reload () {
     this.load(this.current)
+  }
+  
+  registerScore (score) {
+    if (
+      this.highScores[this.current] === undefined
+      || this.highScores[this.current] < score
+    ) {
+      this.highScores[this.current] = score
+    }
   }
   
   generate_default () {
