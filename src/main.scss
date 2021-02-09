@@ -16,7 +16,7 @@ $primary-highlight: #e66;
 :root {
   font-family: "Source Code Pro", monospace;
   font-size: 16px;
-  background: $dark url("../assets/simple-bg.png");
+  background: $white;
   color: $dark;
 }
 
@@ -83,7 +83,7 @@ table {
 }
 
 #app > main {
-  background: $white;
+  background: $dark url("../assets/simple-bg.png");
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
@@ -98,6 +98,7 @@ table {
     cursor: pointer;
     user-select: none;
     touch-action: none;
+    background: $white;
   }
   
   &.fullscreen #canvas {
@@ -111,10 +112,40 @@ table {
     border: 1px solid red;
     visibility: visible;
     background: rgba(128, 128, 128, 0.5);
+
+    #banner {
+      display: block;
+      width: 50%;
+      margin: 0 auto;
+    }
+
+    #levels-list {
+      
+    }
   }
   
   .ui-button {
     position: absolute;
+    cursor: pointer;
+    color: #fff;
+    background: #c44;
+    border: 2px solid #ccc;
+    border-radius: 1rem;
+    box-shadow: 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.5);
+    
+    &:hover {
+      border: 2px solid #fff;
+    }
+    
+    &:active {
+      border: 2px solid #888;
+    }
+    
+    img {
+      display: block;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
   }
   
   #button-home {
@@ -128,7 +159,7 @@ table {
   }
   
   #button-reload {
-    top: 2.5em;
+    top: 3.5em;
     left: 0.5em;
   }
 }
