@@ -45,6 +45,7 @@ class CNY2021 {
       goal: new ImageAsset('assets/goal.png'),
       hero: new ImageAsset('assets/hero.png'),
       instructions: new ImageAsset('assets/instructions.png'),
+      splash: new ImageAsset('assets/splash.png'),
     }
     
     this.hero = null
