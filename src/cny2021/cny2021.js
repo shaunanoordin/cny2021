@@ -252,16 +252,24 @@ class CNY2021 {
     // Draw victory
     if (this.victory) {
       const victoryAnimationTime = Math.max(this.victoryCountdown - PAUSE_AFTER_VICTORY_ANIMATION, 0)
-      const fontSize = Math.floor((victoryAnimationTime / VICTORY_ANIMATION_TIME) * 50 + 10)
+      const fontSize1 = Math.floor((victoryAnimationTime / VICTORY_ANIMATION_TIME) * 50 + 10)
+      const fontSize2 = Math.floor((victoryAnimationTime / VICTORY_ANIMATION_TIME) * 50 + 10)
+      const VERTICAL_OFFSET = TILE_SIZE / 8
       
-      c2d.fillStyle = '#fff'
-      c2d.strokeStyle = '#000'
+      c2d.fillStyle = '#c44'
       c2d.lineWidth = 2
-      c2d.font = `${fontSize}em Source Code Pro`
       c2d.textAlign = 'center'
-      c2d.textBaseline = 'middle'
-      c2d.fillText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2)
-      c2d.strokeText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2)
+      c2d.strokeStyle = '#fff'
+      
+      c2d.font = `${fontSize1}em Source Code Pro`
+      c2d.textBaseline = 'bottom'
+      c2d.fillText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2 - VERTICAL_OFFSET)
+      c2d.strokeText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2 - VERTICAL_OFFSET)
+      
+      c2d.font = `${fontSize2}em Source Code Pro`
+      c2d.textBaseline = 'top'
+      c2d.fillText(`${this.score} points`, APP_WIDTH / 2, APP_HEIGHT / 2 + VERTICAL_OFFSET)
+      c2d.strokeText(`${this.score} points`, APP_WIDTH / 2, APP_HEIGHT / 2 + VERTICAL_OFFSET)
     }
   }
   
