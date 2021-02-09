@@ -20,6 +20,7 @@ class Splash extends Entity {
     const c2d = app.canvas2d
     const camera = app.camera
     const animationSpritesheet = app.assets.splash
+    if (!animationSpritesheet) return
     
     const SPRITE_SIZE = 64
     let SPRITE_OFFSET_X = 0

@@ -24,42 +24,41 @@ class Hero extends Entity {
     const c2d = app.canvas2d
     const camera = app.camera
     const animationSpritesheet = app.assets.hero
+    if (!animationSpritesheet) return
     
-    if (animationSpritesheet) {
-      const SPRITE_SIZE = 64
-      let SPRITE_OFFSET_X = 0
-      let SPRITE_OFFSET_Y = 0
+    const SPRITE_SIZE = 64
+    let SPRITE_OFFSET_X = 0
+    let SPRITE_OFFSET_Y = 0
 
-      const srcSizeX = SPRITE_SIZE
-      const srcSizeY = SPRITE_SIZE
-      let srcX = 0
-      let srcY = 0
+    const srcSizeX = SPRITE_SIZE
+    const srcSizeY = SPRITE_SIZE
+    let srcX = 0
+    let srcY = 0
 
-      const tgtSizeX = SPRITE_SIZE * 1.25
-      const tgtSizeY = SPRITE_SIZE * 1.25
-      const tgtX = Math.floor(this.x + camera.x) - srcSizeX / 2 + SPRITE_OFFSET_X - (tgtSizeX - srcSizeX) / 2
-      const tgtY = Math.floor(this.y + camera.y) - srcSizeY / 2 + SPRITE_OFFSET_Y - (tgtSizeY - srcSizeY) / 2
-      
-      if (this.movementSpeed) {
-        const animationProgress = (this.animationCounter % (this.animationCounterMax / 3)) / (this.animationCounterMax / 3)
-        if (animationProgress < 0.5) {
-          srcY = 2 * SPRITE_SIZE
-        } else {
-          srcY = 3 * SPRITE_SIZE
-        }
+    const tgtSizeX = SPRITE_SIZE * 1.25
+    const tgtSizeY = SPRITE_SIZE * 1.25
+    const tgtX = Math.floor(this.x + camera.x) - srcSizeX / 2 + SPRITE_OFFSET_X - (tgtSizeX - srcSizeX) / 2
+    const tgtY = Math.floor(this.y + camera.y) - srcSizeY / 2 + SPRITE_OFFSET_Y - (tgtSizeY - srcSizeY) / 2
+
+    if (this.movementSpeed) {
+      const animationProgress = (this.animationCounter % (this.animationCounterMax / 3)) / (this.animationCounterMax / 3)
+      if (animationProgress < 0.5) {
+        srcY = 2 * SPRITE_SIZE
       } else {
-        const animationProgress = this.animationCounter / this.animationCounterMax
-        if (animationProgress < 0.5) {
-          srcY = 0
-        } else {
-          srcY = SPRITE_SIZE
-        }
+        srcY = 3 * SPRITE_SIZE
       }
-      
-      srcX = (this.speedX < 0) ? 0 : SPRITE_SIZE
-
-      c2d.drawImage(animationSpritesheet.img, srcX, srcY, srcSizeX, srcSizeY, tgtX, tgtY, tgtSizeX, tgtSizeY)
+    } else {
+      const animationProgress = this.animationCounter / this.animationCounterMax
+      if (animationProgress < 0.5) {
+        srcY = 0
+      } else {
+        srcY = SPRITE_SIZE
+      }
     }
+
+    srcX = (this.speedX < 0) ? 0 : SPRITE_SIZE
+
+    c2d.drawImage(animationSpritesheet.img, srcX, srcY, srcSizeX, srcSizeY, tgtX, tgtY, tgtSizeX, tgtSizeY)
   }
 }
   

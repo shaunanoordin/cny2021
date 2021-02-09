@@ -10,7 +10,7 @@ import Physics from './physics'
 import Levels from './levels'
 import ImageAsset from './image-asset'
 
-const DEBUG = false
+const DEBUG = true
 const STARTING_LEVEL = 0
 
 class CNY2021 {
@@ -46,6 +46,7 @@ class CNY2021 {
       hero: new ImageAsset('assets/hero.png'),
       instructions: new ImageAsset('assets/instructions.png'),
       splash: new ImageAsset('assets/splash.png'),
+      coin: new ImageAsset('assets/coin.png'),
     }
     
     this.hero = null
@@ -123,6 +124,9 @@ class CNY2021 {
     // ----------------
     this.entities.forEach(entity => entity.play(timeStep))
     this.checkCollisions(timeStep)
+    
+    // Cleanup
+    this.entities = this.entities.filter(entity => !entity._expired)
     // ----------------
     
     // Victory check!
