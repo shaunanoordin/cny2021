@@ -327,10 +327,11 @@ class CNY2021 {
       })
 
       const info = document.createElement('span')
+      console.log(this.levels)
       const highScore = this.levels.highScores[i]
-      info.textContent = (highScore !== undefined)
-        ? `best score: ${highScore}`
-        : 'new'
+      info.textContent = (highScore === undefined || highScore === null)
+        ? 'new'
+        : `best score: ${highScore}`
       
       row.append(button)
       row.append(info)

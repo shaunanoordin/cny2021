@@ -8,6 +8,8 @@ import Coin from './entities/coin'
 import Instructions from './entities/instructions'
 import Splash from './entities/splash'
 
+const HIGHSCORE_STORAGE_KEY = 'cny2021.levels.highscores'
+
 export default class Levels {
   constructor (app) {
     this._app = app
@@ -17,6 +19,8 @@ export default class Levels {
       this.generate_level1.bind(this),
     ]
     this.highScores = this.levelGenerators.map(() => undefined)
+    
+    this.loadHighScores()
   }
   
   reset () {
@@ -57,9 +61,30 @@ export default class Levels {
   registerScore (score) {
     if (
       this.highScores[this.current] === undefined
+      || this.highScores[this.current] === null
       || this.highScores[this.current] < score
     ) {
       this.highScores[this.current] = score
+    }
+    
+    this.saveHighScores()
+  }
+  
+  saveHighScores () {
+    const storage = window?.localStorage
+    if (!storage) return
+    storage.setItem(HIGHSCORE_STORAGE_KEY, JSON.stringify(this.highScores))
+  }
+  
+  loadHighScores () {
+    const storage = window?.localStorage
+    if (!storage) return
+    try {
+      const str = storage.getItem(HIGHSCORE_STORAGE_KEY)
+      this.highScores = (str) ? JSON.parse(str) : []
+    } catch (err) {
+      this.highScores = []
+      console.error(err)
     }
   }
   
