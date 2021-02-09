@@ -32,6 +32,7 @@ class Instructions extends Entity {
     const c2d = app.canvas2d
     const camera = app.camera
     const animationSpritesheet = app.assets.instructions
+    if (!animationSpritesheet) return
     
     // Hide the instructions if the "idle timer" is still counting
     if (app.instructionsCountdown > 0) return

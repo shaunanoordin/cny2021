@@ -10,7 +10,7 @@ import Physics from './physics'
 import Levels from './levels'
 import ImageAsset from './image-asset'
 
-const DEBUG = false
+const DEBUG = true
 const STARTING_LEVEL = 0
 
 class CNY2021 {
@@ -46,6 +46,7 @@ class CNY2021 {
       hero: new ImageAsset('assets/hero.png'),
       instructions: new ImageAsset('assets/instructions.png'),
       splash: new ImageAsset('assets/splash.png'),
+      coin: new ImageAsset('assets/coin.png'),
     }
     
     this.hero = null
@@ -63,6 +64,7 @@ class CNY2021 {
     this.victory = false
     this.victoryCountdown = 0
     this.instructionsCountdown = IDLE_TIME_UNTIL_INSTRUCTIONS
+    this.score = 0
 
     this.prevTime = null
     this.nextFrame = window.requestAnimationFrame(this.main.bind(this))
@@ -123,6 +125,9 @@ class CNY2021 {
     // ----------------
     this.entities.forEach(entity => entity.play(timeStep))
     this.checkCollisions(timeStep)
+    
+    // Cleanup
+    this.entities = this.entities.filter(entity => !entity._expired)
     // ----------------
     
     // Victory check!
@@ -186,11 +191,11 @@ class CNY2021 {
           c2d.textBaseline = 'middle'
           const col = Math.floor((x - this.camera.x) / TILE_SIZE)
           const row = Math.floor((y - this.camera.y) / TILE_SIZE)
-          c2d.fillText(`${col},${row}`, x + TILE_SIZE / 2, y + TILE_SIZE / 2)
+          c2d.fillText(col + ',' + row, x + TILE_SIZE / 2, y + TILE_SIZE / 2)  // using template strings here messes up colours in Brackets.
         }
       }
     }
-    
+
     // Draw entities
     this.entities.forEach(entity => entity.paint())
     
@@ -226,20 +231,45 @@ class CNY2021 {
       c2d.lineTo(arrowCoords.x + camera.x, arrowCoords.y + camera.y)
       c2d.stroke()
     }
+
+    // Draw score
+    if (!this.victory) {
+      const SHADOW_OFFSET = 2
+      const X_OFFSET = TILE_SIZE * -2.5
+      const Y_OFFSET = TILE_SIZE * -1.0
+      c2d.font = '3em Source Code Pro'
+      c2d.textAlign = 'right'
+      c2d.textBaseline = 'bottom'
+      c2d.fillStyle = '#444'
+      c2d.fillText(`${this.score} points`, APP_WIDTH + X_OFFSET + SHADOW_OFFSET, APP_HEIGHT + Y_OFFSET + SHADOW_OFFSET)
+      c2d.strokeStyle = '#fff'
+      c2d.lineWidth = 8
+      c2d.strokeText(`${this.score} points`, APP_WIDTH + X_OFFSET, APP_HEIGHT + Y_OFFSET)
+      c2d.fillStyle = '#c44'
+      c2d.fillText(`${this.score} points`, APP_WIDTH + X_OFFSET, APP_HEIGHT + Y_OFFSET)
+    }
     
     // Draw victory
     if (this.victory) {
       const victoryAnimationTime = Math.max(this.victoryCountdown - PAUSE_AFTER_VICTORY_ANIMATION, 0)
-      const fontSize = Math.floor((victoryAnimationTime / VICTORY_ANIMATION_TIME) * 50 + 10)
+      const fontSize1 = Math.floor((victoryAnimationTime / VICTORY_ANIMATION_TIME) * 50 + 10)
+      const fontSize2 = Math.floor((victoryAnimationTime / VICTORY_ANIMATION_TIME) * 50 + 10)
+      const VERTICAL_OFFSET = TILE_SIZE / 8
       
-      c2d.fillStyle = '#fff'
-      c2d.strokeStyle = '#000'
+      c2d.fillStyle = '#c44'
       c2d.lineWidth = 2
-      c2d.font = `${fontSize}em Source Code Pro`
       c2d.textAlign = 'center'
-      c2d.textBaseline = 'middle'
-      c2d.fillText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2)
-      c2d.strokeText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2)
+      c2d.strokeStyle = '#fff'
+      
+      c2d.font = `${fontSize1}em Source Code Pro`
+      c2d.textBaseline = 'bottom'
+      c2d.fillText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2 - VERTICAL_OFFSET)
+      c2d.strokeText('Nice!', APP_WIDTH / 2, APP_HEIGHT / 2 - VERTICAL_OFFSET)
+      
+      c2d.font = `${fontSize2}em Source Code Pro`
+      c2d.textBaseline = 'top'
+      c2d.fillText(`${this.score} points`, APP_WIDTH / 2, APP_HEIGHT / 2 + VERTICAL_OFFSET)
+      c2d.strokeText(`${this.score} points`, APP_WIDTH / 2, APP_HEIGHT / 2 + VERTICAL_OFFSET)
     }
   }
   
@@ -295,13 +325,25 @@ class CNY2021 {
     const list = this.html.levelsList
     while (list.firstChild) { list.removeChild(list.firstChild) }
     for (let i = 0 ; i < this.levels.levelGenerators.length ; i++) {
+      const row = document.createElement('div')
+      
       const button = document.createElement('button')
       button.textContent = `Level ${i + 1}`
       button.addEventListener('click', () => {
         this.levels.load(i)
         this.setMenu(false)
       })
-      list.appendChild(button)
+
+      const info = document.createElement('span')
+      console.log(this.levels)
+      const highScore = this.levels.highScores[i]
+      info.textContent = (highScore === undefined || highScore === null)
+        ? 'new'
+        : `best score: ${highScore}`
+      
+      row.append(button)
+      row.append(info)
+      list.appendChild(row)
     }
   }
   
@@ -409,15 +451,20 @@ class CNY2021 {
     )
     
     console.log('MOVEMENT SPEED: ', movementSpeed)
-    console.log(`STARTING COORDS: ${this.hero.x}, ${this.hero.y}`)
+    console.log('STARTING COORDS: ' + this.hero.x + ' , ' + this.hero.y)  // using template strings here messes up colours in Brackets.
     
     this.hero.speedX = Math.cos(rotation) * movementSpeed
     this.hero.speedY = Math.sin(rotation) * movementSpeed
+
+    this.score--  // Each shot reduces the score
   }
 
   celebrateVictory () {
+    if (this.victory) return
     this.victory = true
     this.victoryCountdown = VICTORY_ANIMATION_TIME + PAUSE_AFTER_VICTORY_ANIMATION
+    this.levels.registerScore(this.score)
+    this.updateLevelsList()
   }
     
   /*
