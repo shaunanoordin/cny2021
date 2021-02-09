@@ -111,10 +111,24 @@ table {
     border: 1px solid red;
     visibility: visible;
     background: rgba(128, 128, 128, 0.5);
+
+    #banner {
+      display: block;
+      width: 50%;
+      margin: 0 auto;
+    }
+
+    #levels-list {
+      
+    }
   }
   
   .ui-button {
     position: absolute;
+    color: #fff;
+    background: #c44;
+    border: 2px solid #cc4;
+    border-radius: 1em;
   }
   
   #button-home {

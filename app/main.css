@@ -94,8 +94,17 @@ table th {
   visibility: visible;
   background: rgba(128, 128, 128, 0.5);
 }
+#app > main #menu #banner {
+  display: block;
+  width: 50%;
+  margin: 0 auto;
+}
 #app > main .ui-button {
   position: absolute;
+  color: #fff;
+  background: #c44;
+  border: 2px solid #cc4;
+  border-radius: 1em;
 }
 #app > main #button-home {
   top: 0.5em;
