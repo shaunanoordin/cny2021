@@ -299,13 +299,21 @@ class CNY2021 {
     const list = this.html.levelsList
     while (list.firstChild) { list.removeChild(list.firstChild) }
     for (let i = 0 ; i < this.levels.levelGenerators.length ; i++) {
+      const row = document.createElement('div')
+      
       const button = document.createElement('button')
       button.textContent = `Level ${i + 1}`
       button.addEventListener('click', () => {
         this.levels.load(i)
         this.setMenu(false)
       })
-      list.appendChild(button)
+
+      const info = document.createElement('span')
+      info.textContent = `score: ${0}`
+      
+      row.append(button)
+      row.append(info)
+      list.appendChild(row)
     }
   }
   

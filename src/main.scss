@@ -121,6 +121,35 @@ table {
 
     #levels-list {
       
+      margin: 1em auto;
+      background: $white;
+      max-width: 40em;
+      
+      > div {
+        padding: 0.5em 1em;
+      
+        button {
+          cursor: pointer;
+          color: #fff;
+          background: #c44;
+          border: 2px solid #ccc;
+          border-radius: 1rem;
+          box-shadow: 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.5);
+          width: 10em;
+          
+          &:hover {
+            border: 2px solid #fff;
+          }
+
+          &:active {
+            border: 2px solid #888;
+          }
+        }
+        
+        span {
+          margin-left: 1em;
+        }
+      }
     }
   }
   
