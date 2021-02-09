@@ -16,7 +16,7 @@ $primary-highlight: #e66;
 :root {
   font-family: "Source Code Pro", monospace;
   font-size: 16px;
-  background: $dark url("../assets/simple-bg.png");
+  background: $white;
   color: $dark;
 }
 
@@ -83,7 +83,7 @@ table {
 }
 
 #app > main {
-  background: $white;
+  background: $dark url("../assets/simple-bg.png");
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
@@ -98,6 +98,7 @@ table {
     cursor: pointer;
     user-select: none;
     touch-action: none;
+    background: $white;
   }
   
   &.fullscreen #canvas {
