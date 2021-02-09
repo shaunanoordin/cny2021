@@ -23,7 +23,8 @@ class Coin extends Entity {
     // Coin has been picked up by the hero!
     if (!this.pickedUp && target === app.hero) {
       this.pickedUp = true
-      this.animationCounter = 0
+      this.animationCounter = 0  // Reset animation
+      app.score++  // Ding! You scored
       console.log('ding!')
     }
   }

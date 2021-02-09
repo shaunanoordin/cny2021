@@ -64,6 +64,7 @@ class CNY2021 {
     this.victory = false
     this.victoryCountdown = 0
     this.instructionsCountdown = IDLE_TIME_UNTIL_INSTRUCTIONS
+    this.score = 0
 
     this.prevTime = null
     this.nextFrame = window.requestAnimationFrame(this.main.bind(this))
@@ -194,7 +195,7 @@ class CNY2021 {
         }
       }
     }
-    
+
     // Draw entities
     this.entities.forEach(entity => entity.paint())
     
@@ -229,6 +230,23 @@ class CNY2021 {
       c2d.moveTo(this.hero.x + camera.x, this.hero.y + camera.y)
       c2d.lineTo(arrowCoords.x + camera.x, arrowCoords.y + camera.y)
       c2d.stroke()
+    }
+
+    // Draw score
+    if (!this.victory) {
+      const SHADOW_OFFSET = 2
+      const X_OFFSET = TILE_SIZE * -2.5
+      const Y_OFFSET = TILE_SIZE * -1.0
+      c2d.font = '3em Source Code Pro'
+      c2d.textAlign = 'right'
+      c2d.textBaseline = 'bottom'
+      c2d.fillStyle = '#444'
+      c2d.fillText(`${this.score} points`, APP_WIDTH + X_OFFSET + SHADOW_OFFSET, APP_HEIGHT + Y_OFFSET + SHADOW_OFFSET)
+      c2d.strokeStyle = '#fff'
+      c2d.lineWidth = 8
+      c2d.strokeText(`${this.score} points`, APP_WIDTH + X_OFFSET, APP_HEIGHT + Y_OFFSET)
+      c2d.fillStyle = '#c44'
+      c2d.fillText(`${this.score} points`, APP_WIDTH + X_OFFSET, APP_HEIGHT + Y_OFFSET)
     }
     
     // Draw victory
@@ -425,6 +443,8 @@ class CNY2021 {
     
     this.hero.speedX = Math.cos(rotation) * movementSpeed
     this.hero.speedY = Math.sin(rotation) * movementSpeed
+
+    this.score--  // Each shot reduces the score
   }
 
   celebrateVictory () {

@@ -30,6 +30,7 @@ export default class Levels {
     app.victory = 0
     app.victoryCountdown = 0
     app.instructionsCountdown = IDLE_TIME_UNTIL_INSTRUCTIONS
+    app.score = 0
   }
   
   load (level = 0) {
