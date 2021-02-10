@@ -215,24 +215,19 @@ export default class Levels {
     app.entities.push(new Wall(app, 5, 5, 18, 1))
     app.entities.push(new Wall(app, 1, 10, 18, 1))
     
-    app.entities.push(new Coin(app, 2.5, 2.5))
     app.entities.push(new Coin(app, 6.5, 2.5))
     app.entities.push(new Coin(app, 10, 2.5))
     app.entities.push(new Coin(app, 13, 2.5))
     app.entities.push(new Coin(app, 16.5, 2.5))
     
-    app.entities.push(new Coin(app, 2.5, 7.5))
     app.entities.push(new Coin(app, 6.5, 7.5))
     app.entities.push(new Coin(app, 16.5, 7.5))
-    app.entities.push(new Coin(app, 20.5, 7.5))
     
     app.entities.push(new Coin(app, 2.5, 12.5))
     app.entities.push(new Coin(app, 6.5, 12.5))
     app.entities.push(new Coin(app, 10, 12.5))
     app.entities.push(new Coin(app, 13, 12.5))
     app.entities.push(new Coin(app, 16.5, 12.5))
-    app.entities.push(new Coin(app, 20.5, 12.5))
-    
   }
 
   /*  High difficulty level with corners and bouncing balls.
