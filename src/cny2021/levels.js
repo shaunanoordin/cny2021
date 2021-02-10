@@ -15,8 +15,8 @@ export default class Levels {
     this._app = app
     this.current = 1
     this.levelGenerators = [
-      this.generate_level0.bind(this),
       this.generate_level1.bind(this),
+      this.generate_level2.bind(this),
     ]
     this.highScores = this.levelGenerators.map(() => undefined)
     
@@ -90,6 +90,8 @@ export default class Levels {
     }
   }
   
+  /*  Default level.
+   */
   generate_default () {
     const app = this._app
     
@@ -108,7 +110,9 @@ export default class Levels {
     app.entities.push(new Wall(app, 1, 6, 21, 1))  // South Wall
   }
   
-  generate_level0 () {
+  /*  Introductory level
+   */
+  generate_level1 () {
     const app = this._app
     
     app.hero = new Hero(app, 11, 3)
@@ -132,14 +136,16 @@ export default class Levels {
     app.entities.push(new Coin(app, 15, 3))
   }
   
-  generate_level1 () {
+  /*  Diagonal shot level
+    */
+  generate_level2 () {
     const app = this._app
     
     app.hero = new Hero(app, 9, 5)
     app.entities.push(app.hero)
     app.camera.target = app.hero
     
-    app.entities.push(new Goal(app, 15, 3))
+    app.entities.push(new Goal(app, 11, 3))
     
     app.instructions = new Instructions(app, 5, 3)
     app.entities.push(app.instructions)
@@ -151,15 +157,12 @@ export default class Levels {
     
     app.entities.push(new Coin(app, 3, 3))
     app.entities.push(new Coin(app, 7, 3))
-    app.entities.push(new Ball(app, 11, 3))
+    app.entities.push(new Coin(app, 15, 3))
     
     app.entities.push(new Coin(app, 3, 7))
     app.entities.push(new Coin(app, 7, 7))
     app.entities.push(new Coin(app, 11, 7))
     app.entities.push(new Coin(app, 15, 7))
-    
-    app.entities.push(new Ball(app, 5, 5))
-    app.entities.push(new Ball(app, 13, 5))
   }
   
 }
