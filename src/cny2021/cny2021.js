@@ -10,7 +10,7 @@ import Physics from './physics'
 import Levels from './levels'
 import ImageAsset from './image-asset'
 
-const DEBUG = true
+const DEBUG = false
 const STARTING_LEVEL = 0
 
 class CNY2021 {
@@ -282,10 +282,16 @@ class CNY2021 {
     this.html.canvas.width = this.canvasWidth
     this.html.canvas.height = this.canvasHeight
     
-    this.html.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this))
-    this.html.canvas.addEventListener('pointermove', this.onPointerMove.bind(this))
-    this.html.canvas.addEventListener('pointerup', this.onPointerUp.bind(this))
-    this.html.canvas.addEventListener('pointercancel', this.onPointerUp.bind(this))
+    if (window.PointerEvent) {
+      this.html.canvas.addEventListener('pointerdown', this.onPointerDown.bind(this))
+      this.html.canvas.addEventListener('pointermove', this.onPointerMove.bind(this))
+      this.html.canvas.addEventListener('pointerup', this.onPointerUp.bind(this))
+      this.html.canvas.addEventListener('pointercancel', this.onPointerUp.bind(this))
+    } else {
+      this.html.canvas.addEventListener('mousedown', this.onPointerDown.bind(this))
+      this.html.canvas.addEventListener('mousemove', this.onPointerMove.bind(this))
+      this.html.canvas.addEventListener('mouseup', this.onPointerUp.bind(this))
+    }
     
     // Prevent "touch and hold to open context menu" menu on touchscreens.
     this.html.canvas.addEventListener('touchstart', stopEvent)
