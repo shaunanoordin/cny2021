@@ -13,10 +13,11 @@ const HIGHSCORE_STORAGE_KEY = 'cny2021.levels.highscores'
 export default class Levels {
   constructor (app) {
     this._app = app
-    this.current = 1
+    this.current = 0
     this.levelGenerators = [
       this.generate_level1.bind(this),
       this.generate_level2.bind(this),
+      this.generate_level3.bind(this),
     ]
     this.highScores = this.levelGenerators.map(() => undefined)
     
@@ -165,4 +166,29 @@ export default class Levels {
     app.entities.push(new Coin(app, 15, 7))
   }
   
+  /*  Ball tutorial level
+   */
+  generate_level3 () {
+    const app = this._app
+    
+    app.hero = new Hero(app, 12, 3)
+    app.entities.push(app.hero)
+    app.camera.target = app.hero
+    
+    app.entities.push(new Goal(app, 21, 3))
+    
+    app.instructions = new Instructions(app, 5, 3)
+    app.entities.push(app.instructions)
+    
+    app.entities.push(new Wall(app, 0, 0, 1, 7))  // West Wall
+    app.entities.push(new Wall(app, 24, 0, 1, 7))  // East Wall
+    app.entities.push(new Wall(app, 1, 0, 23, 1))  // North Wall
+    app.entities.push(new Wall(app, 1, 6, 23, 1))  // South Wall
+    
+    app.entities.push(new Ball(app, 4, 3))
+    app.entities.push(new Coin(app, 8, 3))
+    app.entities.push(new Coin(app, 16, 3))
+    app.entities.push(new Ball(app, 16, 1.5))
+    app.entities.push(new Ball(app, 16, 4.5))
+  }
 }
