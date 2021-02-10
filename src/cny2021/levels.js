@@ -59,6 +59,8 @@ export default class Levels {
   }
   
   registerScore (score) {
+    if (this.current < 0 || this.current >= this.levelGenerators.length) return
+    
     if (
       this.highScores[this.current] === undefined
       || this.highScores[this.current] === null
