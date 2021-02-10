@@ -5,6 +5,7 @@ import {
   VICTORY_ANIMATION_TIME,
   PAUSE_AFTER_VICTORY_ANIMATION,
   IDLE_TIME_UNTIL_INSTRUCTIONS,
+  MAX_PULL_DISTANCE,
 } from './constants'
 import Physics from './physics'
 import Levels from './levels'
@@ -164,6 +165,7 @@ class CNY2021 {
     const camera = this.camera
     
     // Camera Controls: focus the camera on the target entity, if any.
+    // ----------------
     if (camera.target) {
       camera.x = this.canvasWidth / 2 - camera.target.x
       camera.y = this.canvasHeight / 2 - camera.target.y
@@ -173,11 +175,13 @@ class CNY2021 {
     
     c2d.strokeStyle = 'rgba(128, 128, 128, 0.05)'
     c2d.lineWidth = 2
+    // ----------------
     
+    // Draw grid
+    // ----------------
     const offsetX = (this.camera.x % TILE_SIZE) - TILE_SIZE
     const offsetY = (this.camera.y % TILE_SIZE) - TILE_SIZE
     
-    // Draw grid
     for (let y = offsetY ; y < APP_HEIGHT ; y += TILE_SIZE) {
       for (let x = offsetX ; x < APP_WIDTH ; x += TILE_SIZE) {
         c2d.beginPath()
@@ -196,11 +200,15 @@ class CNY2021 {
         }
       }
     }
+    // ----------------
 
     // Draw entities
+    // ----------------
     this.entities.forEach(entity => entity.paint())
+    // ----------------
     
     // Draw player input
+    // ----------------
     if (
       this.playerAction === PLAYER_ACTIONS.PULLING
       && this.hero
@@ -232,8 +240,10 @@ class CNY2021 {
       c2d.lineTo(arrowCoords.x + camera.x, arrowCoords.y + camera.y)
       c2d.stroke()
     }
+    // ----------------
 
     // Draw score
+    // ----------------
     if (!this.victory) {
       const SHADOW_OFFSET = 2
       const X_OFFSET = TILE_SIZE * -2.5
@@ -249,8 +259,10 @@ class CNY2021 {
       c2d.fillStyle = '#c44'
       c2d.fillText(`${this.score} points`, APP_WIDTH + X_OFFSET, APP_HEIGHT + Y_OFFSET)
     }
+    // ----------------
     
     // Draw victory
+    // ----------------
     if (this.victory) {
       const victoryAnimationTime = Math.max(this.victoryCountdown - PAUSE_AFTER_VICTORY_ANIMATION, 0)
       const fontSize1 = Math.floor((victoryAnimationTime / VICTORY_ANIMATION_TIME) * 50 + 10)
@@ -272,6 +284,7 @@ class CNY2021 {
       c2d.fillText(`${this.score} points`, APP_WIDTH / 2, APP_HEIGHT / 2 + VERTICAL_OFFSET)
       c2d.strokeText(`${this.score} points`, APP_WIDTH / 2, APP_HEIGHT / 2 + VERTICAL_OFFSET)
     }
+    // ----------------
   }
   
   /*
@@ -449,7 +462,6 @@ class CNY2021 {
     const dist = Math.sqrt(directionX * directionX + directionY * directionY)
     const rotation = Math.atan2(directionY, directionX)
 
-    const MAX_PULL_DISTANCE = TILE_SIZE * 4
     const intendedMovement = dist / MAX_PULL_DISTANCE * this.hero.moveMaxSpeed
     const movementSpeed = Math.min(
       intendedMovement,
