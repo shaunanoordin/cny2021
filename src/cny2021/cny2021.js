@@ -10,8 +10,9 @@ import Physics from './physics'
 import Levels from './levels'
 import ImageAsset from './image-asset'
 
-const DEBUG = false
-const STARTING_LEVEL = 0
+const searchParams = new URLSearchParams(window.location.search)
+const DEBUG = searchParams.get('debug') || false
+const STARTING_LEVEL = searchParams.get('level') || 0
 
 class CNY2021 {
   constructor () {
@@ -341,7 +342,6 @@ class CNY2021 {
       })
 
       const info = document.createElement('span')
-      console.log(this.levels)
       const highScore = this.levels.highScores[i]
       info.textContent = (highScore === undefined || highScore === null)
         ? 'new'
