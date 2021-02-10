@@ -196,24 +196,39 @@ export default class Levels {
   generate_level4 () {
     const app = this._app
     
-    app.hero = new Hero(app, 12, 3)
+    app.hero = new Hero(app, 11.5, 7.5)
     app.entities.push(app.hero)
     app.camera.target = app.hero
     
-    app.entities.push(new Goal(app, 21, 3))
+    app.entities.push(new Goal(app, 20.5, 2.5))
     
     app.instructions = new Instructions(app, 5, 3)
     app.entities.push(app.instructions)
     
-    app.entities.push(new Wall(app, 0, 0, 1, 7))  // West Wall
-    app.entities.push(new Wall(app, 24, 0, 1, 7))  // East Wall
-    app.entities.push(new Wall(app, 1, 0, 23, 1))  // North Wall
-    app.entities.push(new Wall(app, 1, 6, 23, 1))  // South Wall
+    app.entities.push(new Wall(app, 0, 0, 1, 16))  // West Wall
+    app.entities.push(new Wall(app, 23, 0, 1, 16))  // East Wall
+    app.entities.push(new Wall(app, 1, 0, 22, 1))  // North Wall
+    app.entities.push(new Wall(app, 1, 15, 22, 1))  // South Wall
+    app.entities.push(new Wall(app, 5, 5, 18, 1))
+    app.entities.push(new Wall(app, 1, 10, 18, 1))
     
-    app.entities.push(new Ball(app, 4, 3))
-    app.entities.push(new Coin(app, 8, 3))
-    app.entities.push(new Coin(app, 16, 3))
-    app.entities.push(new Ball(app, 16, 1.5))
-    app.entities.push(new Ball(app, 16, 4.5))
+    app.entities.push(new Coin(app, 2.5, 2.5))
+    app.entities.push(new Coin(app, 6.5, 2.5))
+    app.entities.push(new Coin(app, 10, 2.5))
+    app.entities.push(new Coin(app, 13, 2.5))
+    app.entities.push(new Coin(app, 16.5, 2.5))
+    
+    app.entities.push(new Coin(app, 2.5, 7.5))
+    app.entities.push(new Coin(app, 6.5, 7.5))
+    app.entities.push(new Coin(app, 16.5, 7.5))
+    app.entities.push(new Coin(app, 20.5, 7.5))
+    
+    app.entities.push(new Coin(app, 2.5, 12.5))
+    app.entities.push(new Coin(app, 6.5, 12.5))
+    app.entities.push(new Coin(app, 10, 12.5))
+    app.entities.push(new Coin(app, 13, 12.5))
+    app.entities.push(new Coin(app, 16.5, 12.5))
+    app.entities.push(new Coin(app, 20.5, 12.5))
+    
   }
 }
