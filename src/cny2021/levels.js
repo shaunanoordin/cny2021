@@ -113,7 +113,8 @@ export default class Levels {
     app.entities.push(new Wall(app, 1, 6, 21, 1))  // South Wall
   }
   
-  /*  Introductory level
+  /*
+  Introductory level
    */
   generate_level1 () {
     const app = this._app
@@ -139,7 +140,10 @@ export default class Levels {
     app.entities.push(new Coin(app, 15, 3))
   }
   
-  /*  Diagonal shot level
+  /*
+  Diagonal shot level
+  One shot solution (10 points):
+  - Aim directly 45º south-west
     */
   generate_level2 () {
     const app = this._app
@@ -157,6 +161,11 @@ export default class Levels {
     app.entities.push(new Wall(app, 18, 0, 1, 11))  // East Wall
     app.entities.push(new Wall(app, 1, 0, 17, 1))  // North Wall
     app.entities.push(new Wall(app, 1, 10, 17, 1))  // South Wall
+    
+    app.entities.push(new Coin(app, 5, 2))
+    app.entities.push(new Coin(app, 5, 8))
+    app.entities.push(new Coin(app, 13, 2))
+    app.entities.push(new Coin(app, 13, 8))
     
     app.entities.push(new Coin(app, 3, 3))
     app.entities.push(new Coin(app, 7, 3))
@@ -188,13 +197,27 @@ export default class Levels {
     app.entities.push(new Wall(app, 1, 6, 23, 1))  // South Wall
     
     app.entities.push(new Ball(app, 4, 3))
-    app.entities.push(new Coin(app, 8, 3))
-    app.entities.push(new Coin(app, 16, 3))
     app.entities.push(new Ball(app, 16, 1.5))
     app.entities.push(new Ball(app, 16, 4.5))
+    
+    app.entities.push(new Coin(app, 6, 2.5))
+    app.entities.push(new Coin(app, 6, 3.5))
+    app.entities.push(new Coin(app, 7, 2.5))
+    app.entities.push(new Coin(app, 7, 3.5))
+    app.entities.push(new Coin(app, 8, 2.5))
+    app.entities.push(new Coin(app, 8, 3.5))
+    
+    app.entities.push(new Coin(app, 15, 2.5))
+    app.entities.push(new Coin(app, 15, 3.5))
+    app.entities.push(new Coin(app, 16, 3))
+    app.entities.push(new Coin(app, 17, 2.5))
+    app.entities.push(new Coin(app, 17, 3.5))
   }
 
-  /*  S-tube bounce level
+  /*
+  S-tube bounce level
+  One shot solution (10 points):
+  - Aim directly 45º north-east
    */
   generate_level4 () {
     const app = this._app
@@ -230,10 +253,11 @@ export default class Levels {
     app.entities.push(new Coin(app, 16.5, 12.5))
   }
 
-  /*  High difficulty level with corners and bouncing balls.
-      One shot solution (10 points):
-      - shoot DIRECTLY south...
-      - ...when the horizontal ball is moving left at (11,8)
+  /*
+  High difficulty level with corners and bouncing balls.
+  One shot solution (10 points):
+  - shoot DIRECTLY south...
+  - ...when the horizontal ball is moving left at (11,8)
    */
   generate_level5 () {
     const app = this._app
