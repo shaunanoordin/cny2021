@@ -8,7 +8,7 @@ class Coin extends Entity {
     this.colour = '#864'
     this.x = col * TILE_SIZE + TILE_SIZE / 2
     this.y = row * TILE_SIZE + TILE_SIZE / 2
-    this.z = 90
+    this.z = 70
     
     this.solid = false
     this.animationCounterMax = 1000

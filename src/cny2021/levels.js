@@ -135,23 +135,31 @@ export default class Levels {
   generate_level1 () {
     const app = this._app
     
-    app.hero = new Hero(app, 11, 5)
+    app.hero = new Hero(app, 9, 5)
     app.entities.push(app.hero)
     app.camera.target = app.hero
     
-    app.entities.push(new Goal(app, 19, 3))
+    app.entities.push(new Goal(app, 15, 3))
     
     app.instructions = new Instructions(app, 5, 3)
     app.entities.push(app.instructions)
     
     app.entities.push(new Wall(app, 0, 0, 1, 11))  // West Wall
-    app.entities.push(new Wall(app, 22, 0, 1, 11))  // East Wall
-    app.entities.push(new Wall(app, 1, 0, 21, 1))  // North Wall
-    app.entities.push(new Wall(app, 1, 10, 21, 1))  // South Wall
+    app.entities.push(new Wall(app, 18, 0, 1, 11))  // East Wall
+    app.entities.push(new Wall(app, 1, 0, 17, 1))  // North Wall
+    app.entities.push(new Wall(app, 1, 10, 17, 1))  // South Wall
     
-    app.entities.push(new Ball(app, 15, 1))
-    app.entities.push(new Ball(app, 15, 3))
-    app.entities.push(new Ball(app, 15, 5))
+    app.entities.push(new Coin(app, 3, 3))
+    app.entities.push(new Coin(app, 7, 3))
+    app.entities.push(new Ball(app, 11, 3))
+    
+    app.entities.push(new Coin(app, 3, 7))
+    app.entities.push(new Coin(app, 7, 7))
+    app.entities.push(new Coin(app, 11, 7))
+    app.entities.push(new Coin(app, 15, 7))
+    
+    app.entities.push(new Ball(app, 5, 5))
+    app.entities.push(new Ball(app, 13, 5))
   }
   
 }
