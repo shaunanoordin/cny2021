@@ -235,6 +235,11 @@ export default class Levels {
     
   }
 
+  /*  High difficulty level with corners and bouncing balls.
+      One shot solution (10 points):
+      - shoot DIRECTLY south...
+      - ...when the horizontal ball is moving left at (11,8)
+   */
   generate_level5 () {
     const app = this._app
     
@@ -252,6 +257,7 @@ export default class Levels {
     app.entities.push(new Wall(app, 1, 0, 24, 1))  // North Wall
     app.entities.push(new Wall(app, 1, 14, 9, 1))  // South Wall 1
     app.entities.push(new Wall(app, 10, 20, 15, 1))  // South Wall 2
+    app.entities.push(new Wall(app, 9, 7, 1, 3))
     app.entities.push(new Wall(app, 1, 1, 3, 3, 'se'))
     app.entities.push(new Wall(app, 1, 11, 3, 3, 'ne'))
     app.entities.push(new Wall(app, 10, 1, 3, 3, 'sw'))
@@ -262,18 +268,32 @@ export default class Levels {
     
     let ball
     
-    app.entities.push(ball = new Ball(app, 4, 1))
+    app.entities.push(ball = new Ball(app, 5, 11))
     ball.moveDeceleration = 0
-    ball.speedY = 8
+    ball.speedY = -6.5
     
-    app.entities.push(ball = new Ball(app, 5, 2))
+    app.entities.push(ball = new Ball(app, 6, 12))
     ball.moveDeceleration = 0
-    ball.speedY = 8
+    ball.speedY = -6.5
     
-    app.entities.push(ball = new Ball(app, 6, 3))
+    app.entities.push(ball = new Ball(app, 7, 13))
     ball.moveDeceleration = 0
-    ball.speedY = 8
+    ball.speedY = -6.5
     
+    app.entities.push(ball = new Ball(app, 11, 8))
+    ball.moveDeceleration = 0
+    ball.speedX = 7.5
     
+    app.entities.push(new Coin(app, 15.5, 14.5))
+    app.entities.push(new Coin(app, 6, 12))
+    app.entities.push(new Coin(app, 20, 12))
+    app.entities.push(new Coin(app, 20, 2))
+    app.entities.push(new Coin(app, 14, 5))
+    app.entities.push(new Coin(app, 11, 8))
+    app.entities.push(new Coin(app, 22, 10))
+    app.entities.push(new Coin(app, 20, 8))
+    app.entities.push(new Coin(app, 17, 2))
+    app.entities.push(new Coin(app, 2, 8))
+    app.entities.push(new Coin(app, 6, 2))
   }
 }
