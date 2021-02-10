@@ -19,6 +19,7 @@ export default class Levels {
       this.generate_level2.bind(this),
       this.generate_level3.bind(this),
       this.generate_level4.bind(this),
+      this.generate_level5.bind(this),
     ]
     this.highScores = this.levelGenerators.map(() => undefined)
     
@@ -193,6 +194,8 @@ export default class Levels {
     app.entities.push(new Ball(app, 16, 4.5))
   }
 
+  /*  S-tube bounce level
+   */
   generate_level4 () {
     const app = this._app
     
@@ -229,6 +232,48 @@ export default class Levels {
     app.entities.push(new Coin(app, 13, 12.5))
     app.entities.push(new Coin(app, 16.5, 12.5))
     app.entities.push(new Coin(app, 20.5, 12.5))
+    
+  }
+
+  generate_level5 () {
+    const app = this._app
+    
+    app.hero = new Hero(app, 11, 12)
+    app.entities.push(app.hero)
+    app.camera.target = app.hero
+    
+    app.entities.push(new Goal(app, 14, 8))
+    
+    app.instructions = new Instructions(app, 5, 3)
+    app.entities.push(app.instructions)
+    
+    app.entities.push(new Wall(app, 0, 0, 1, 15))  // West Wall
+    app.entities.push(new Wall(app, 25, 0, 1, 21))  // East Wall
+    app.entities.push(new Wall(app, 1, 0, 24, 1))  // North Wall
+    app.entities.push(new Wall(app, 1, 14, 9, 1))  // South Wall 1
+    app.entities.push(new Wall(app, 10, 20, 15, 1))  // South Wall 2
+    app.entities.push(new Wall(app, 1, 1, 3, 3, 'se'))
+    app.entities.push(new Wall(app, 1, 11, 3, 3, 'ne'))
+    app.entities.push(new Wall(app, 10, 1, 3, 3, 'sw'))
+    app.entities.push(new Wall(app, 16, 11, 9, 9, 'nw'))
+    app.entities.push(new Wall(app, 10, 14, 6, 6, 'ne'))
+    app.entities.push(new Wall(app, 13, 1, 3, 3, 'se'))
+    app.entities.push(new Wall(app, 22, 1, 3, 3, 'sw'))
+    
+    let ball
+    
+    app.entities.push(ball = new Ball(app, 4, 1))
+    ball.moveDeceleration = 0
+    ball.speedY = 8
+    
+    app.entities.push(ball = new Ball(app, 5, 2))
+    ball.moveDeceleration = 0
+    ball.speedY = 8
+    
+    app.entities.push(ball = new Ball(app, 6, 3))
+    ball.moveDeceleration = 0
+    ball.speedY = 8
+    
     
   }
 }

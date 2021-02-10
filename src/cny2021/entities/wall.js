@@ -2,7 +2,7 @@ import Entity from '../entity'
 import { SHAPES, TILE_SIZE } from '../constants'
 
 class Wall extends Entity {
-  constructor (app, col = 0, row = 0, width = 1, height = 1) {
+  constructor (app, col = 0, row = 0, width = 1, height = 1, cutCorner = false) {
     super(app)
     
     this.colour = '#888'
@@ -12,12 +12,12 @@ class Wall extends Entity {
     this.y = row * TILE_SIZE
     
     this.shape = SHAPES.POLYGON
-    this.shapePolygonPath = [
-      0, 0,
-      width * TILE_SIZE, 0,
-      width * TILE_SIZE, height * TILE_SIZE,
-      0, height * TILE_SIZE
-    ]
+    this.shapePolygonPath = []
+    
+    if (cutCorner !== 'nw') this.shapePolygonPath.push(0, 0)
+    if (cutCorner !== 'ne') this.shapePolygonPath.push(width * TILE_SIZE, 0)
+    if (cutCorner !== 'se') this.shapePolygonPath.push(width * TILE_SIZE, height * TILE_SIZE)
+    if (cutCorner !== 'sw') this.shapePolygonPath.push(0, height * TILE_SIZE)
   }
 }
   
