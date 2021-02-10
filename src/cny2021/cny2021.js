@@ -217,7 +217,7 @@ class CNY2021 {
       c2d.lineTo(inputCoords.x, inputCoords.y)
       c2d.stroke()
       c2d.beginPath()
-      c2d.arc(inputCoords.x, inputCoords.y, ACCEPTABLE_INPUT_DISTANCE_FROM_HERO, 0, 2 * Math.PI)
+      c2d.arc(inputCoords.x, inputCoords.y, TILE_SIZE, 0, 2 * Math.PI)
       c2d.stroke()
       
       const arrowCoords = {
@@ -375,7 +375,7 @@ class CNY2021 {
     if (this.hero) {
       const distX = this.hero.x - coords.x + camera.x
       const distY = this.hero.y - coords.y + camera.y
-      const distFromHero = Math.sqrt(distX * distX + distY + distY)
+      const distFromHero = Math.sqrt(distX * distX + distY * distY)
       const rotation = Math.atan2(distY, distX)
       
       if (distFromHero < ACCEPTABLE_INPUT_DISTANCE_FROM_HERO) {
