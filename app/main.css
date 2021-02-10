@@ -100,10 +100,20 @@ table th {
   width: 50%;
   margin: 0 auto;
 }
-#app > main #menu #levels-list {
+#app > main #menu > p {
+  font-size: 0.8em;
   margin: 1em auto;
   background: #fff;
   max-width: 40em;
+  border-radius: 1em;
+  padding: 0.5em 1em;
+}
+#app > main #menu #levels-list {
+  font-size: 0.8em;
+  margin: 1em auto;
+  background: #fff;
+  max-width: 40em;
+  border-radius: 1em;
 }
 #app > main #menu #levels-list > div {
   padding: 0.5em 1em;
