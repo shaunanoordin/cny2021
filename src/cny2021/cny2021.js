@@ -13,7 +13,9 @@ import ImageAsset from './image-asset'
 
 const searchParams = new URLSearchParams(window.location.search)
 const DEBUG = searchParams.get('debug') || false
-const STARTING_LEVEL = searchParams.get('level') || 0
+const STARTING_LEVEL = (Number.isInteger(parseInt(searchParams.get('level'))))
+  ? parseInt(searchParams.get('level')) - 1
+  : 0
 
 class CNY2021 {
   constructor () {
@@ -245,19 +247,23 @@ class CNY2021 {
     // Draw score
     // ----------------
     if (!this.victory) {
-      const SHADOW_OFFSET = 2
-      const X_OFFSET = TILE_SIZE * -2.5
+      const X_OFFSET = TILE_SIZE * 2.5
       const Y_OFFSET = TILE_SIZE * -1.0
       c2d.font = '3em Source Code Pro'
-      c2d.textAlign = 'right'
       c2d.textBaseline = 'bottom'
-      c2d.fillStyle = '#444'
-      c2d.fillText(`${this.score} points`, APP_WIDTH + X_OFFSET + SHADOW_OFFSET, APP_HEIGHT + Y_OFFSET + SHADOW_OFFSET)
-      c2d.strokeStyle = '#fff'
       c2d.lineWidth = 8
-      c2d.strokeText(`${this.score} points`, APP_WIDTH + X_OFFSET, APP_HEIGHT + Y_OFFSET)
+      
+      c2d.textAlign = 'right'
+      c2d.strokeStyle = '#fff'
+      c2d.strokeText(`${this.score} points`, APP_WIDTH - X_OFFSET, APP_HEIGHT + Y_OFFSET)
       c2d.fillStyle = '#c44'
-      c2d.fillText(`${this.score} points`, APP_WIDTH + X_OFFSET, APP_HEIGHT + Y_OFFSET)
+      c2d.fillText(`${this.score} points`, APP_WIDTH - X_OFFSET, APP_HEIGHT + Y_OFFSET)
+      
+      c2d.textAlign = 'left'
+      c2d.strokeStyle = '#fff'
+      c2d.strokeText(`Level ${this.levels.current + 1}`, X_OFFSET, APP_HEIGHT + Y_OFFSET)
+      c2d.fillStyle = '#c44'
+      c2d.fillText(`Level ${this.levels.current + 1}`, X_OFFSET, APP_HEIGHT + Y_OFFSET)
     }
     // ----------------
     
