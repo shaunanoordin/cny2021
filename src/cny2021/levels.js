@@ -154,8 +154,6 @@ export default class Levels {
     
     app.entities.push(new Goal(app, 11, 3))
     
-    app.instructions = new Instructions(app, 5, 3)
-    app.entities.push(app.instructions)
     
     app.entities.push(new Wall(app, 0, 0, 1, 11))  // West Wall
     app.entities.push(new Wall(app, 18, 0, 1, 11))  // East Wall
